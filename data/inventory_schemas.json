@@ -1,0 +1,3258 @@
+{
+  "metadata": {
+    "threshold": 0.9,
+    "total_inventories": 4755,
+    "analysis_date": "2026-03-07T22:30:40.897198"
+  },
+  "subcategory_schemas": {
+    "Vacío": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Dipropor",
+            "Eternit",
+            "Klar",
+            "LACASA",
+            "MBS",
+            "Nicoll",
+            "PowerTek",
+            "TEMPORAL",
+            "TEMPORAL_3M",
+            "TEMPORAL_CLUTE",
+            "TEMPORAL_ECOMIX",
+            "TEMPORAL_ECOPANZER",
+            "TEMPORAL_NACIONAL",
+            "TEMPORAL_PROTEX",
+            "TEMPORAL_SEGPRO",
+            "TEMPORAL_SOLVEX",
+            "TEMPORAL_TECSEG",
+            "Temporal_Thermotek",
+            "Thermotek",
+            "VyE"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ",
+            "CTO",
+            "MLL",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Acabados y recubrimiento": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "24 cm x 24 cm x 3 cm",
+            "24cm x 12cm x 6cm",
+            "24cm x 12cm x 9cm",
+            "24cm x 24cm x 3cm",
+            "35cm x 16.5cm x 5.5cm x 1cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "2",
+            "2.3",
+            "2.55",
+            "2.9"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Piramide",
+            "Sagitario"
+          ]
+        }
+      }
+    },
+    "Aditivos para Blocks de Vidrio": {
+      "required_fields": [
+        "variant",
+        "presentation",
+        "measure",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "5 kilos"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "Bolsa"
+          ]
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "25 cm x 4.5 cm x 35 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "5 Kilos"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "KG"
+          ]
+        }
+      }
+    },
+    "Aditivos para Concreto": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "LT",
+            "ML",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Agua": {
+      "required_fields": [
+        "variant",
+        "model",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "CR",
+            "Mixto",
+            "Mixto SP",
+            "PR",
+            "SP",
+            "SP RI",
+            "Simple",
+            "UPR"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Inyectoplast",
+            "Matusita",
+            "Pavco",
+            "Plastica",
+            "Tuboplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Alambres": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "#16",
+            "#8"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Negro"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "Rollo x100kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Aceros Arequipa",
+            "Siderperu"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "KG"
+          ]
+        }
+      }
+    },
+    "Arcilla": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "12 x 30 x 30",
+            "12x30x30 cm.",
+            "15 x 30 x 30",
+            "15x30x30 cm.",
+            "15x8x25 cm.",
+            "18.7 x 35 x 10",
+            "18.7 x 35 x 12",
+            "20x30x30 cm.",
+            "24x3x24 cm.",
+            "25x30x30 cm.",
+            "30 x 25 x 3",
+            "6x12.5x23 cm.",
+            "8 x 14 x 25",
+            "8.8 x 22.5 x 10.8",
+            "8x30x30 cm.",
+            "9 x 12.5 x 23.5",
+            "9x10.5x23 cm.",
+            "9x12.5x23 cm.",
+            "9x13x24 cm."
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1,90",
+            "1.6",
+            "10,00",
+            "12,25",
+            "2,00",
+            "2,30",
+            "2,70",
+            "2.5",
+            "2.75",
+            "3,10",
+            "3,80",
+            "4,50",
+            "5",
+            "5.5",
+            "6,20",
+            "6.5",
+            "7,60",
+            "7.5"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Ital",
+            "Lark"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "MLL"
+          ]
+        }
+      }
+    },
+    "Arnéses": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Spro",
+            "TRX"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Barras de Acero": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 3/8\" x 9 mts",
+            "1\" x 9 mts",
+            "1/2\" x 9 mts",
+            "12 mm x 9 mts",
+            "3/4\" x 9 mts",
+            "3/8\" x 9 mts",
+            "4.7 mm x 8.8 mts",
+            "5/8\" x 9 mts",
+            "6 mm x 9 mts",
+            "8 mm x 9 mts"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Aceros Arequipa",
+            "Siderperu"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Baños": {
+      "required_fields": [
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "0",
+            "Acero Inoxidable",
+            "Bronce",
+            "Bronce cromado",
+            "Bronce niquelado",
+            "Loza Vitrificada",
+            "Loza vitrificada",
+            "Metálico",
+            "Polipropileno"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Italgrif",
+            "Rotoplas",
+            "Trebol",
+            "Vainsa"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "M2",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Bioseguridad": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Spro",
+            "TRX"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Cables": {
+      "required_fields": [
+        "variant",
+        "color",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Celeste",
+            "Gris",
+            "Gris Claro",
+            "Gris Oscuro",
+            "Marrón",
+            "NEGRO",
+            "Naranja",
+            "Negro",
+            "Negro/Blanco/Rojo",
+            "ROJO",
+            "Rojo",
+            "Rosado",
+            "Verde",
+            "Verde/Amarillo",
+            "Violeta"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "CELSA",
+            "Centelsa",
+            "Elcope",
+            "Indeco"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "MTS",
+            "RLL",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Calzado de Seguridad": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "Talla 34",
+            "Talla 35",
+            "Talla 36",
+            "Talla 37",
+            "Talla 38",
+            "Talla 39",
+            "Talla 40",
+            "Talla 41",
+            "Talla 42",
+            "Talla 43",
+            "Talla 44",
+            "Talla 45",
+            "Talla 46"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Azul",
+            "Blanco",
+            "Marron",
+            "Moro",
+            "NEGRO",
+            "Negro",
+            "Nogal",
+            "Rosado"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 1 PAR",
+            "CAJA 20 PARES",
+            "CAJA X 1 PAR",
+            "SACO 10 PARES",
+            "SACO 12 PARES",
+            "SACO 20 PARES",
+            "SACO 7 PARES"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Segusa",
+            "Spro",
+            "Xtreme"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "PAR"
+          ]
+        }
+      }
+    },
+    "Cascos": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "Aluminio/ABS",
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Luna Claro",
+            "Naranja",
+            "Negro",
+            "Pin Lock",
+            "Plástico",
+            "Ratchet",
+            "Rojo",
+            "Verde"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "AMARILLO",
+            "AZUL",
+            "Amarillo",
+            "Azul",
+            "BLANCO",
+            "Blanco",
+            "LUNA CLARA",
+            "NEGRO",
+            "Naranja",
+            "Rojo",
+            "VERDE",
+            "Verde"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "BOLSA X 25",
+            "BOLSA X 50",
+            "CAJA 100 UND",
+            "CAJA 125 UND",
+            "CAJA 25 UND",
+            "CAJA X 32",
+            "PAQUETE 100"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Pyramex",
+            "Segusa",
+            "Spro"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Cemento": {
+      "required_fields": [
+        "presentation",
+        "type",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "EMBOLSADO"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "TIPO GU",
+            "TIPO HS",
+            "TIPO I"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "42.5"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Andino",
+            "Apu",
+            "Sol"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Cerámicos": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "20x61 cm",
+            "27x45 cm",
+            "30x30",
+            "30x60 cm",
+            "45x45 cm",
+            "60x60",
+            "60x60 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1.63 kg",
+            "11.8",
+            "17.28",
+            "2.05 kg",
+            "2.75 kg",
+            "2.92 kg",
+            "6.47 kg"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "0",
+            "Cerámica"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Celima",
+            "San Lorenzo"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "M2",
+            "MTS"
+          ]
+        }
+      }
+    },
+    "Clavos": {
+      "required_fields": [
+        "variant",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 1/2\"",
+            "1\"",
+            "2 1/2\"",
+            "2\"",
+            "3\"",
+            "4\""
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "Caja 25kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Aceros Arequipa",
+            "Siderperu"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ"
+          ]
+        }
+      }
+    },
+    "Cocinas": {
+      "required_fields": [
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "0",
+            "Acero Inoxidable",
+            "Bronce",
+            "Bronce cromado",
+            "Bronce y silicona"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Italgrif",
+            "Trebol",
+            "Vainsa"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Desagüe": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Inyectoplast",
+            "Matusita",
+            "Pavco",
+            "Plastica",
+            "Tuboplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Desmoldantes": {
+      "required_fields": [
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "18",
+            "19",
+            "20",
+            "20 Litros",
+            "200",
+            "200 Litros",
+            "229",
+            "230",
+            "3.71",
+            "3.93",
+            "4.02",
+            "4.092"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "LT",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Duchas": {
+      "required_fields": [
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "0",
+            "Acero Inoxidable",
+            "Bronce",
+            "Bronce cromado",
+            "Bronce y ABS",
+            "Metálico"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Italgrif",
+            "Rotoplas",
+            "Sole",
+            "Trebol",
+            "Vainsa"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Eléctrica": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 1/2\"",
+            "1 1/4\"",
+            "1\"",
+            "1/2\"",
+            "2 1/2\"",
+            "2\"",
+            "3\"",
+            "3/4\"",
+            "4\"",
+            "4\" a 2\"",
+            "4\" a 4\"",
+            "5/8\"",
+            "6\"",
+            "Caja Octagonal",
+            "Caja Rectangular"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Inyectoplast",
+            "Matusita",
+            "Pavco",
+            "Plastica",
+            "Tuboplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Enchapes y decorativos": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "25cm x 6cm x 2cm",
+            "30cm x 4cm x 2cm",
+            "30cm x 9cm x 2cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "0.4",
+            "0.48",
+            "0.9"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Piramide"
+          ]
+        }
+      }
+    },
+    "Epóxicos, Morteros y Grouting": {
+      "required_fields": [
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1 Kilo",
+            "1.23",
+            "15 Kilos",
+            "25.1",
+            "27 Kilos",
+            "30 Kilos",
+            "30.1",
+            "300 ml.",
+            "4 Litros",
+            "4.206",
+            "5 Kilos",
+            "5.45",
+            "600 ml"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "KG",
+            "LT",
+            "ML",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Guantes": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Novax",
+            "Sicurex",
+            "Spro",
+            "Strom",
+            "TRX",
+            "Wonder Grip"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "PAR"
+          ]
+        }
+      }
+    },
+    "Herramientas a corriente": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Bosch"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Herramientas inalámbricas": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "Baretool",
+            "Herramienta completa"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Bosch"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Impermeabilizantes": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "MBS",
+            "Thermotek"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Impermeabilizantes para Estructuras": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "GR",
+            "KG",
+            "LT",
+            "ML",
+            "MTS",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Industriales": {
+      "required_fields": [
+        "variant",
+        "color",
+        "type",
+        "model",
+        "measure",
+        "weight",
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "5.5 kg",
+            "AMARILLO",
+            "AMARILLO MEDIANO",
+            "AZUL NAVAL",
+            "BLANCO",
+            "CELESTE",
+            "GRIS CLARO",
+            "GRIS MEDIANO",
+            "Gris",
+            "NARANJA INTERNACIONAL",
+            "NEGRO",
+            "ROJO",
+            "VERDE MEDIANO",
+            "ZINCROMATO"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "AMARILLO",
+            "AMARILLO MEDIANO",
+            "AZUL NAVAL",
+            "BLANCO",
+            "CELESTE",
+            "GRIS CLARO",
+            "GRIS MEDIANO",
+            "Gris",
+            "NARANJA INTERNACIONAL",
+            "NEGRO",
+            "ROJO",
+            "VERDE MEDIANO",
+            "ZINCROMATO"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "Alquídico",
+            "Barniz",
+            "Epóxico",
+            "Gloss",
+            "Tráfico"
+          ]
+        },
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "Barniz Ignifugo",
+            "Cromato de Zinc",
+            "Epóxico",
+            "Epóxico Piscina",
+            "Epóxico Zincromato",
+            "Gloss",
+            "Mastic 850",
+            "Tráfico TTP-115 F"
+          ]
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "22.5x19x19",
+            "22.5x19x20",
+            "22.5x19x22",
+            "24x21x28",
+            "24x21x29",
+            "40x20x20"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "12",
+            "26",
+            "45051",
+            "45144"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Caja Kit",
+            "Envase Hojalata"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Bonn"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "KIT",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Lentes": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Spro",
+            "TRX",
+            "Uvex"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "PZA",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Mortero": {
+      "required_fields": [
+        "variant",
+        "weight",
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "Big Bag",
+            "Contra Piso",
+            "Muros Divisorios",
+            "Muros Portantes",
+            "Solaqueo",
+            "Tarrajeo De Muros"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1600 kg",
+            "40 kg"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Concreto",
+            "Concreto Líquido",
+            "Mortero"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "LACASA"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Muros y tabiquería": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "11 x 21.5 x 9",
+            "12.5 x 23 x 9",
+            "21.5 cm x 10.5 cm x 8.8 cm",
+            "22.5 cm x 12.2 cm x 9 cm",
+            "23cm x 11cm x 9cm",
+            "23cm x 12.5cm x 9cm",
+            "23cm x 12.5cm x 9xm",
+            "24 cm x 13 cm x 9 cm",
+            "24cm x 13cm x 9cm",
+            "25cm x 8cm x 15cm",
+            "34cm x 10cm x 19cm",
+            "34cm x 12cm x 18cm",
+            "34cm x 8cm x 18cm",
+            "8 cm x 25 cm x 14 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1.8",
+            "2.1",
+            "2.2",
+            "2.5",
+            "2.8",
+            "2.9",
+            "3.1",
+            "3.2",
+            "4.1",
+            "4.5",
+            "5",
+            "5.1"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Fortes",
+            "Piramide",
+            "Sagitario"
+          ]
+        }
+      }
+    },
+    "Otros Aditivos y Adiciones": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "model",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Gris"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "Paquete"
+          ]
+        },
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "Colmafix"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "5 Kilos"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "KG"
+          ]
+        }
+      }
+    },
+    "Pegamentos y Fraguas": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Weber",
+            "Weber Celima",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Pinturas Decorativas": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "brand"
+      ],
+      "field_options": {
+        "color": {
+          "type": "text",
+          "question": "De que color?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 Gl",
+            "1/4 Gl",
+            "4 Gl"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "American Colors",
+            "CPP",
+            "Fast",
+            "Tekno",
+            "Vencedor"
+          ]
+        }
+      }
+    },
+    "Pinturas Especiales": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "brand"
+      ],
+      "field_options": {
+        "color": {
+          "type": "text",
+          "question": "De que color?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 Gl",
+            "1/4 Gl"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "American Colors",
+            "CPP",
+            "Tekno",
+            "Vencedor"
+          ]
+        }
+      }
+    },
+    "Pinturas Industriales": {
+      "required_fields": [
+        "presentation",
+        "brand"
+      ],
+      "field_options": {
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 Gl",
+            "4 Gl"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "CPP"
+          ]
+        }
+      }
+    },
+    "Placas": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "50cm x 10cm x 25cm",
+            "50cm x 12cm x 25cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "17",
+            "20.8"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Piramide"
+          ]
+        }
+      }
+    },
+    "Placas silico calcareas": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "measure",
+        "thickness",
+        "weight",
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "P-10",
+            "P-12",
+            "P-14",
+            "P-7"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Blanco Grisáceo"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "112 unidades por parihuela",
+            "56 unidades por parihuela",
+            "64 unidades por parihuela",
+            "80 unidades por parihuela"
+          ]
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "10 x 50 x 25 cm",
+            "12 x 50 x 25 cm",
+            "14 x 50 x 25 cm",
+            "7 x 50 x 25 cm"
+          ]
+        },
+        "thickness": {
+          "type": "choice",
+          "question": "De que espesor?",
+          "options": [
+            "10 cm",
+            "12 cm",
+            "14 cm",
+            "7 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "14.5 kg",
+            "18.5 kg",
+            "22.5 kg",
+            "24.5 kg"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Sílico Calcáreo"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "LACASA"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Placas sílico calcáreas": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "measure",
+        "thickness",
+        "weight",
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "P-10",
+            "P-12",
+            "P-14",
+            "P-7"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Blanco Grisáceo"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "112 unidades por parihuela",
+            "56 unidades por parihuela",
+            "64 unidades por parihuela",
+            "80 unidades por parihuela"
+          ]
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "10 x 50 x 25 cm",
+            "12 x 50 x 25 cm",
+            "14 x 50 x 25 cm",
+            "7 x 50 x 25 cm"
+          ]
+        },
+        "thickness": {
+          "type": "choice",
+          "question": "De que espesor?",
+          "options": [
+            "10 cm",
+            "12 cm",
+            "14 cm",
+            "7 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "14.5 kg",
+            "18.5 kg",
+            "22.5 kg",
+            "24.5 kg"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Sílico Calcáreo"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "LACASA"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Planchas de Drywall": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 1/2\" 1.20 x 2.40mts",
+            "1\" 1.20 x 2.40mts",
+            "1/2\" 1.20 x 2.40mts",
+            "10mm",
+            "12mm",
+            "2\" 1.20 x 2.40mts",
+            "3\" 1.20 x 2.40mts",
+            "3/4\" 1.20 x 2.40mts",
+            "4\" 1.20 x 2.40mts",
+            "5mm",
+            "6\" 1.20 x 2.40mts",
+            "6mm",
+            "7mm",
+            "7mm Extraliviana",
+            "7mm Verde",
+            "8mm",
+            "9mm"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Dipropor",
+            "Gyplac",
+            "Superboard"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Plásticos y mallas": {
+      "required_fields": [
+        "color",
+        "type",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Azul",
+            "Negro",
+            "Negro con lineas verdes",
+            "Verde",
+            "Verde con negro"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "Malla"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "100gr/m2",
+            "20.58 kg",
+            "26.88 kg",
+            "80 gr/m2",
+            "90 gr/m2",
+            "90.47 gr/m2"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "KFZ"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "MTS"
+          ]
+        }
+      }
+    },
+    "Policarbonato": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "5.5 mm Transparente",
+            "5.5mm Blanco"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Klar"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Porcelanatos": {
+      "required_fields": [
+        "material",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "0",
+            "Porcelanato"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Arlett",
+            "Porcelanite"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "M2",
+            "MTS"
+          ]
+        }
+      }
+    },
+    "Protección Auditiva": {
+      "required_fields": [
+        "variant",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "26 DB",
+            "31 DB",
+            "Bolsa",
+            "EY45-6 27DB",
+            "EY46-6 25DB",
+            "Estuche"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 50 UND",
+            "CAJA 500"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Spro"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Resanar y Empastar": {
+      "required_fields": [
+        "color",
+        "brand"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Blanco"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "CPP"
+          ]
+        }
+      }
+    },
+    "Rodilleras": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "TRX Cuero",
+            "TRX Economica",
+            "TRX Profesional"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "TRX"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Ropa Industrial": {
+      "required_fields": [
+        "variant",
+        "color",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "AMARILLO",
+            "AZUL",
+            "BLANCO",
+            "CELESTE",
+            "GRIS",
+            "MARRON",
+            "MELANGE",
+            "NARANJA",
+            "VERDE"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 10 UND",
+            "CAJA 100 UND",
+            "CAJA 20 UND",
+            "CAJA 25 UND",
+            "CAJA 50 UND",
+            "CAJA X 25",
+            "MANGA CORTA",
+            "MANGA LARGA",
+            "MODELO CLÁSICO",
+            "MODELO REPORTERO"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Corporación Textil del Perú",
+            "Genesis",
+            "Spro"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "PAR",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Selladores de Juntas": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "ML",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Selladores, temples y masillas": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "Caja X 20 Kg",
+            "Saco X 25 Kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Gyplac"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "BOL",
+            "CAJ"
+          ]
+        }
+      }
+    },
+    "Separadores": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Solventes": {
+      "required_fields": [
+        "variant",
+        "type",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 gl",
+            "1/16 gln - 8oz",
+            "1/32 gln - 4 oz",
+            "1/4 gln - 32oz",
+            "1/64 gln - 2oz",
+            "1/8 gln - 16oz"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "PVC"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Oatey"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Tachos y Contenedores": {
+      "required_fields": [
+        "variant",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "150 kilos",
+            "300 kilos",
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Café",
+            "Gris",
+            "Pedal 1100 kg.",
+            "Pedal 120 kg.",
+            "Pedal 240 kg.",
+            "Pedal 660 kg.",
+            "Rojo",
+            "Verde"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1",
+            "10.4 kg",
+            "10.4 kg +/-",
+            "16 kg",
+            "42 kg",
+            "44.5 kg",
+            "51 kg",
+            "7.7 kg",
+            "8.4 kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Qrubber"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Techos": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "12.5cm x 42.5cm x 39cm x 15cm",
+            "20cm x 40.6cm x 12cm",
+            "20cm x 40.6cm x 15cm",
+            "20cm x 40.6cm x 36cm x 12cm",
+            "20cm x 40.6cm x 36cm x 15cm",
+            "25 cm x 39 x 15",
+            "25cm x 42.5cm x 39cm x 15cm",
+            "25cm x 42.5cm x 39cm x 20cm",
+            "25cm x 42.5cm x 39cm x 6cm x 3.5cm",
+            "29.5 X 29.5 X 15",
+            "30 cm x 30 cm x 12 cm",
+            "30 cm x 30 cm x 15 cm",
+            "30 cm x 30 cm x 20 cm",
+            "30cm x 30cm x 12cm",
+            "30cm x 30cm x 15cm",
+            "30cm x 30cm x 20cm",
+            "30cm x 30cm x 8cm",
+            "30cm x30cm x 8cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "10.1",
+            "10.4",
+            "11.9",
+            "4.5",
+            "4.6",
+            "4.8",
+            "5.7",
+            "6.6",
+            "6.8",
+            "7.4",
+            "7.5",
+            "7.8",
+            "8.1",
+            "8.3",
+            "9.2",
+            "9.5"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Fortes",
+            "Piramide",
+            "Sagitario"
+          ]
+        }
+      }
+    },
+    "Tubería Eléctrica": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 1/2\"",
+            "1\"",
+            "1/2\"",
+            "1/4\"",
+            "110mm/hdep 450",
+            "110mm/hdep 750",
+            "160mm/hdep 450",
+            "160mm/hdep 750",
+            "2 1/2\"",
+            "2\"",
+            "200mm/hdep 450",
+            "200mm/hdep 750",
+            "250mm/ hdep 450",
+            "250mm/ hdep 750",
+            "3\"",
+            "3/4\"",
+            "4\"",
+            "63mm/hdep 450",
+            "63mm/hdep 750"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Koplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND",
+            "mm"
+          ]
+        }
+      }
+    },
+    "UF": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Inyectoplast",
+            "Tuboplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Válvulas y Conexiones": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "0.9 mm",
+            "1.2 mm",
+            "1.2mm",
+            "1.5 mm",
+            "1.5mm",
+            "STANDARD 0.9mm"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Jormen"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    }
+  },
+  "category_schemas": {
+    "Vacío": {
+      "required_fields": [
+        "variant",
+        "color",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1/4 Gl Medio",
+            "1/4 Gl Pesado",
+            "1/4Gl Regular",
+            "1Gl Medio",
+            "1Gl Pesado",
+            "1Gl Regular"
+          ]
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Gris"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "0.850",
+            "1.030",
+            "3.500",
+            "3.919"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Nicoll"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Acero": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "#16",
+            "#8",
+            "1 1/2\"",
+            "1 3/8\" x 9 mts",
+            "1\"",
+            "1\" x 9 mts",
+            "1/2\" x 9 mts",
+            "12 mm x 9 mts",
+            "2 1/2\"",
+            "2\"",
+            "3\"",
+            "3/4\" x 9 mts",
+            "3/8\" x 9 mts",
+            "4\"",
+            "4.7 mm x 8.8 mts",
+            "5/8\" x 9 mts",
+            "6 mm x 9 mts",
+            "8 mm x 9 mts"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Aceros Arequipa",
+            "Siderperu",
+            "Temporal_Sider Perú"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ",
+            "KG",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Aditivos para construcción e impermeabilizantes": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "MBS",
+            "Temporal_Thermotek",
+            "Thermotek"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Baños y Cocinas": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Fibras Rivera",
+            "Forza Fina",
+            "Fundición Pacífico",
+            "Italgrif",
+            "Rotoplas",
+            "Sole",
+            "Trebol",
+            "Vainsa"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "M2",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Drywall": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "1 1/2\" 1.20 x 2.40mts",
+            "1\" 1.20 x 2.40mts",
+            "1/2\" 1.20 x 2.40mts",
+            "10mm",
+            "12mm",
+            "2\" 1.20 x 2.40mts",
+            "3\" 1.20 x 2.40mts",
+            "3/4\" 1.20 x 2.40mts",
+            "4\" 1.20 x 2.40mts",
+            "5mm",
+            "6\" 1.20 x 2.40mts",
+            "6mm",
+            "7mm",
+            "7mm Extraliviana",
+            "7mm Verde",
+            "8mm",
+            "9mm",
+            "Caja X 20 Kg",
+            "Saco X 25 Kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Dipropor",
+            "Gyplac",
+            "Superboard"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "BOL",
+            "CAJ",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Electricidad": {
+      "required_fields": [
+        "variant",
+        "color",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Celeste",
+            "Gris",
+            "Gris Claro",
+            "Gris Oscuro",
+            "Marrón",
+            "NEGRO",
+            "Naranja",
+            "Negro",
+            "Negro/Blanco/Rojo",
+            "ROJO",
+            "Rojo",
+            "Rosado",
+            "Verde",
+            "Verde/Amarillo",
+            "Violeta"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "CELSA",
+            "Centelsa",
+            "Elcope",
+            "Indeco"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "MTS",
+            "RLL",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Embolsados": {
+      "required_fields": [
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1600 kg",
+            "40 kg",
+            "42.5"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Andino",
+            "Apu",
+            "LACASA",
+            "Sol"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Equipos Protección Personal": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "text",
+          "question": "De que marca?"
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ",
+            "PAR",
+            "PZA",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Ferretería": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Cisa",
+            "Ferro Forte",
+            "KFZ",
+            "Oatey",
+            "PowerTek",
+            "Visalock",
+            "Vulkan"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CTO",
+            "MLL",
+            "MTS",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Herramientas": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Bosch",
+            "Maxtool"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Higiene y Limpieza": {
+      "required_fields": [
+        "variant",
+        "weight",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "150 kilos",
+            "300 kilos",
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Café",
+            "Gris",
+            "Pedal 1100 kg.",
+            "Pedal 120 kg.",
+            "Pedal 240 kg.",
+            "Pedal 660 kg.",
+            "Rojo",
+            "Verde"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1",
+            "10.4 kg",
+            "10.4 kg +/-",
+            "16 kg",
+            "42 kg",
+            "44.5 kg",
+            "51 kg",
+            "7.7 kg",
+            "8.4 kg"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Qrubber",
+            "Thermotek"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Ladrillos": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "brand"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "text",
+          "question": "De que medida?"
+        },
+        "weight": {
+          "type": "text",
+          "question": "De que peso?"
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Dipropor",
+            "Fortes",
+            "Ital",
+            "LACASA",
+            "Lark",
+            "Piramide",
+            "Sagitario"
+          ]
+        }
+      }
+    },
+    "Otros": {
+      "required_fields": [
+        "variant",
+        "presentation",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "Barandas",
+            "Cortinas",
+            "Divisiones",
+            "Empanelado",
+            "Mampara",
+            "Mosquitero",
+            "Muro",
+            "Puertas",
+            "Roller",
+            "Separa Rollers",
+            "Sistemas plegadizos",
+            "Toldo",
+            "Ventana",
+            "Ventanal"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "VyE"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND"
+          ]
+        }
+      }
+    },
+    "Pinturas": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "brand"
+      ],
+      "field_options": {
+        "color": {
+          "type": "text",
+          "question": "De que color?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 GL",
+            "1 Gl",
+            "1/4 Gl",
+            "4 Gl",
+            "5 GL",
+            "5 Gl",
+            "Kit 2 GL"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "American Colors",
+            "Bonn",
+            "CPP",
+            "Fast",
+            "Tekno",
+            "Vencedor"
+          ]
+        }
+      }
+    },
+    "Pisos y Pegamentos": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Arlett",
+            "Celima",
+            "Porcelanite",
+            "San Lorenzo",
+            "Weber",
+            "Weber Celima",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "M2",
+            "MTS",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Químicos para Construcción": {
+      "required_fields": [
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Sika",
+            "Z Aditivos"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "GR",
+            "KG",
+            "LT",
+            "ML",
+            "MTS",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Techos": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "choice",
+          "question": "Que variante?",
+          "options": [
+            "0.61X1.22m (Cj X6)",
+            "5.5 mm Transparente",
+            "5.5mm Blanco",
+            "Blanco",
+            "Rojo"
+          ]
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Eternit",
+            "Klar"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "CAJ",
+            "UND"
+          ]
+        }
+      }
+    },
+    "Tuberías, Válvulas y Conexiones": {
+      "required_fields": [
+        "variant",
+        "brand",
+        "unity"
+      ],
+      "field_options": {
+        "variant": {
+          "type": "text",
+          "question": "Que variante?"
+        },
+        "brand": {
+          "type": "choice",
+          "question": "De que marca?",
+          "options": [
+            "Inyectoplast",
+            "Jormen",
+            "Koplast",
+            "Matusita",
+            "Pavco",
+            "Plastica",
+            "Tuboplast"
+          ]
+        },
+        "unity": {
+          "type": "choice",
+          "question": "En que unidad?",
+          "options": [
+            "UND",
+            "mm"
+          ]
+        }
+      }
+    }
+  }
+}
