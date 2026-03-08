@@ -18,5 +18,5 @@ class Config:
 
     # Cloud Storage
     GCS_BUCKET_KNOWLEDGE: str = os.getenv("GCS_BUCKET_KNOWLEDGE", "")
-    GCS_INVENTORY_SCHEMAS_PATH: str = "base/inventory_schemas_clean.json"
+    GCS_INVENTORY_SCHEMAS_PATH: str = "obralex/inventory_schemas_clean.json"
     GCS_TTL_SECONDS: int = 3600
