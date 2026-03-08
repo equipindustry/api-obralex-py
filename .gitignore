@@ -40,3 +40,4 @@ archive.zip
 .venv/
 
 keys/*.json
+docs/*.json
