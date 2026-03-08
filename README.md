@@ -1,8 +1,10 @@
 # Obralex API
 
-API REST construida con FastAPI.
+API REST construida con FastAPI para el ecosistema **Equip Construye** (marketplace B2B de materiales de construccion).
 
-## Instalación
+Expone servicios de busqueda de inventarios via Vertex AI Search y resolucion de schemas de inventario desde Cloud Storage, consumidos por equip-mcp-hub y api-maia.
+
+## Instalacion
 
 ```bash
 python -m venv venv
@@ -10,21 +12,76 @@ source venv/bin/activate  # En Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-## Ejecución
+Copiar `.env.example` a `.env` y configurar las variables.
+
+## Ejecucion
 
 ```bash
 uvicorn main:app --reload
 ```
 
-La API estará disponible en `http://localhost:8000`
+La API estara disponible en `http://localhost:8000`
 
 ## Endpoints
 
-- `GET /` - Mensaje de bienvenida
-- `GET /api/v1/health` - Health check
-- `GET /docs` - Documentación interactiva (Swagger)
+| Endpoint | Metodo | Descripcion |
+|----------|--------|-------------|
+| `/` | GET | Mensaje de bienvenida |
+| `/api/v1/health` | GET | Health check |
+| `/api/v1/search` | GET | Buscar inventarios en Vertex AI Search |
+| `/api/v1/search/summary` | GET | Buscar con resumen generado por IA |
+| `/api/v1/inventories/schema` | GET | Obtener required_fields y field_options para un query |
+| `/api/v1/schemas/status` | GET | Estado del cache de schemas |
+| `/api/v1/schemas/reload` | POST | Forzar recarga de schemas desde Cloud Storage |
+| `/docs` | GET | Documentacion interactiva (Swagger) |
 
-# GCP
+## Arquitectura
+
+```
+Cliente (Telegram) -> api-maia -> equip-mcp-hub -> api-obralex -> Vertex AI Search + Cloud Storage
+```
+
+### Estructura del proyecto
+
+```
+src/
+├── api/            # Routers FastAPI
+│   ├── health.py
+│   ├── search.py
+│   └── schema.py
+├── core/           # Configuracion, credenciales, logging
+│   ├── config.py
+│   ├── environment.py
+│   └── logging.py
+├── models/         # Modelos Pydantic de response
+│   ├── search.py
+│   └── schema.py
+└── services/       # Logica de negocio
+    ├── vertex_ai_search.py
+    └── inventory_schema.py
+```
+
+### Servicios principales
+
+- **VertexAISearchService** — Busca inventarios en Google Discovery Engine (Vertex AI Search).
+- **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default.
+
+### Terminologia
+
+- **Inventory** = material en almacen de la startup (lo que tenemos en stock)
+- **Product** = material que solicita el cliente (lo que quiere cotizar)
+
+## Variables de entorno
+
+| Variable | Descripcion |
+|----------|-------------|
+| `GOOGLE_APPLICATION_CREDENTIALS` | Ruta al JSON del service account (no necesario en Cloud Run) |
+| `VERTEX_SEARCH_LOCATION` | Region de Vertex AI Search |
+| `VERTEX_SEARCH_DATASTORE_ID` | ID del datastore |
+| `VERTEX_SEARCH_COLLECTION` | Nombre de la coleccion |
+| `GCS_BUCKET_KNOWLEDGE` | Bucket de Cloud Storage para schemas |
+
+## Deploy en GCP (Cloud Run)
 
 ### Paso 1: Autenticar con GCloud
 
@@ -43,9 +100,9 @@ docker build -t us-central1-docker.pkg.dev/maia-466013/ar-api-obralex-prod/api-o
 ### Paso 3: Autenticar Docker con Artifact Registry
 
 ```bash
-~ gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
+gcloud auth print-access-token | docker login -u oauth2accesstoken --password-stdin https://us-central1-docker.pkg.dev
 
-~ gcloud auth configure-docker us-central1-docker.pkg.dev
+gcloud auth configure-docker us-central1-docker.pkg.dev
 ```
 
 ### Paso 4: Subir imagen
@@ -53,3 +110,9 @@ docker build -t us-central1-docker.pkg.dev/maia-466013/ar-api-obralex-prod/api-o
 ```bash
 docker push us-central1-docker.pkg.dev/maia-466013/ar-api-obralex-prod/api-obralex-prod:1
 ```
+
+## Documentacion adicional
+
+- `docs/API_SCHEMA_EXAMPLES.md` — Ejemplos de requests para los endpoints de schema
+- `docs/PLAN_PRODUCT_SCHEMA.md` — Plan de arquitectura de schemas desde Cloud Storage
+- `docs/PLAN_INVENTORY_ANALYSIS.md` — Plan de analisis de inventarios en Colab

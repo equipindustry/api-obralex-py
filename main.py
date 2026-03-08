@@ -4,6 +4,7 @@ import uvicorn
 
 from src.api.health import router as health_router
 from src.api.search import router as search_router
+from src.api.schema import router as schema_router
 
 app = FastAPI(
     title="Obralex API",
@@ -21,6 +22,7 @@ app.add_middleware(
 
 app.include_router(health_router, prefix="/api/v1", tags=["health"])
 app.include_router(search_router, prefix="/api/v1", tags=["search"])
+app.include_router(schema_router, prefix="/api/v1", tags=["schemas"])
 
 
 @app.get("/")
