@@ -41,3 +41,5 @@ archive.zip
 
 keys/*.json
 docs/*.json
+
+docs/*.xlsx
