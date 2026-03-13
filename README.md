@@ -24,16 +24,16 @@ La API estara disponible en `http://localhost:8000`
 
 ## Endpoints
 
-| Endpoint | Metodo | Descripcion |
-|----------|--------|-------------|
-| `/` | GET | Mensaje de bienvenida |
-| `/api/v1/health` | GET | Health check |
-| `/api/v1/search` | GET | Buscar inventarios en Vertex AI Search |
-| `/api/v1/search/summary` | GET | Buscar con resumen generado por IA |
-| `/api/v1/inventories/schema` | GET | Obtener required_fields y field_options para un query |
-| `/api/v1/schemas/status` | GET | Estado del cache de schemas |
-| `/api/v1/schemas/reload` | POST | Forzar recarga de schemas desde Cloud Storage |
-| `/docs` | GET | Documentacion interactiva (Swagger) |
+| Endpoint                     | Metodo | Descripcion                                           |
+| ---------------------------- | ------ | ----------------------------------------------------- |
+| `/`                          | GET    | Mensaje de bienvenida                                 |
+| `/api/v1/health`             | GET    | Health check                                          |
+| `/api/v1/search`             | GET    | Buscar inventarios en Vertex AI Search                |
+| `/api/v1/search/summary`     | GET    | Buscar con resumen generado por IA                    |
+| `/api/v1/inventories/schema` | GET    | Obtener required_fields y field_options para un query |
+| `/api/v1/schemas/status`     | GET    | Estado del cache de schemas                           |
+| `/api/v1/schemas/reload`     | POST   | Forzar recarga de schemas desde Cloud Storage         |
+| `/docs`                      | GET    | Documentacion interactiva (Swagger)                   |
 
 ## Arquitectura
 
@@ -71,15 +71,26 @@ src/
 - **Inventory** = material en almacen de la startup (lo que tenemos en stock)
 - **Product** = material que solicita el cliente (lo que quiere cotizar)
 
+## Vertex AI Search: App vs Datastore
+
+En Vertex AI Search existen dos recursos principales:
+
+- **Datastore** — Almacena y indexa los datos (conexion a BigQuery, Cloud Storage, etc.).
+- **App (Engine)** — Capa de configuracion sobre el datastore que activa la capacidad de busqueda y genera el `servingConfig` necesario para hacer queries.
+
+**Es obligatorio crear ambos.** Aunque en el codigo solo se referencia el `VERTEX_SEARCH_DATASTORE_ID`, la app debe existir porque es la que genera el `servingConfig/default_search` que la API de Discovery Engine necesita para ejecutar busquedas. Sin la app, ese serving config no existe y las llamadas fallarian.
+
+El codigo accede al serving config directamente por la ruta del datastore (`dataStores/{id}/servingConfigs/default_search`), por eso no se necesita el App ID como variable de entorno.
+
 ## Variables de entorno
 
-| Variable | Descripcion |
-|----------|-------------|
+| Variable                         | Descripcion                                                  |
+| -------------------------------- | ------------------------------------------------------------ |
 | `GOOGLE_APPLICATION_CREDENTIALS` | Ruta al JSON del service account (no necesario en Cloud Run) |
-| `VERTEX_SEARCH_LOCATION` | Region de Vertex AI Search |
-| `VERTEX_SEARCH_DATASTORE_ID` | ID del datastore |
-| `VERTEX_SEARCH_COLLECTION` | Nombre de la coleccion |
-| `GCS_BUCKET_KNOWLEDGE` | Bucket de Cloud Storage para schemas |
+| `VERTEX_SEARCH_LOCATION`         | Region de Vertex AI Search                                   |
+| `VERTEX_SEARCH_DATASTORE_ID`     | ID del datastore                                             |
+| `VERTEX_SEARCH_COLLECTION`       | Nombre de la coleccion                                       |
+| `GCS_BUCKET_KNOWLEDGE`           | Bucket de Cloud Storage para schemas                         |
 
 ## Deploy en GCP (Cloud Run)
 
