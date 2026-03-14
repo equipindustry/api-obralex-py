@@ -1,6 +1,8 @@
 from google.cloud import discoveryengine_v1 as discoveryengine
+from google.protobuf.json_format import MessageToDict
 from dataclasses import dataclass, field
 from typing import Any
+import json
 
 
 @dataclass
@@ -97,7 +99,8 @@ class VertexAISearchService:
         return [self._parse_result(r) for r in response.results]
 
     def _parse_result(self, result) -> InventorySearchResult:
-        data = dict(result.document.struct_data)
+        struct_pb = discoveryengine.Document.pb(result.document).struct_data
+        data = MessageToDict(struct_pb)
         return InventorySearchResult(
             document_id=result.document.id,
             relevance_score=getattr(result, "relevance_score", 0.0),
