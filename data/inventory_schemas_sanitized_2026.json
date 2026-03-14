@@ -1,0 +1,1052 @@
+{
+  "metadata": {
+    "source": "BigQuery",
+    "table": "maia-466013.ds_business.inventories-sanitized-prod",
+    "threshold": 0.9,
+    "min_products": 10,
+    "total_inventories": 3091,
+    "subcategories_with_schema": 29,
+    "analysis_date": "2026-03-13T06:27:26.432221"
+  },
+  "subcategory_schemas": {
+    "Cables": {
+      "required_fields": [
+        "color"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Celeste",
+            "Gris",
+            "Gris Claro",
+            "Gris Oscuro",
+            "Marrón",
+            "NEGRO",
+            "Naranja",
+            "Negro",
+            "Negro/Blanco/Rojo",
+            "ROJO",
+            "Rojo",
+            "Rosado",
+            "Verde",
+            "Verde/Amarillo",
+            "Violeta"
+          ]
+        }
+      }
+    },
+    "Pinturas Decorativas": {
+      "required_fields": [
+        "color",
+        "presentation"
+      ],
+      "field_options": {
+        "color": {
+          "type": "text",
+          "question": "De que color?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 Gl",
+            "1/4 Gl",
+            "4 Gl"
+          ]
+        }
+      }
+    },
+    "Agua": {
+      "required_fields": [
+        "model",
+        "measure"
+      ],
+      "field_options": {
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "CR",
+            "Mixto",
+            "Mixto SP",
+            "PR",
+            "SP",
+            "SP RI",
+            "Simple",
+            "UPR"
+          ]
+        },
+        "measure": {
+          "type": "text",
+          "question": "De que medida?"
+        }
+      }
+    },
+    "Desagüe": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "text",
+          "question": "De que medida?"
+        }
+      }
+    },
+    "Eléctrica": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "1 1/2\"",
+            "1 1/4\"",
+            "1\"",
+            "1/2\"",
+            "2 1/2\"",
+            "2\"",
+            "3\"",
+            "3/4\"",
+            "4\"",
+            "4\" a 2\"",
+            "4\" a 4\"",
+            "5/8\"",
+            "6\""
+          ]
+        }
+      }
+    },
+    "Calzado de Seguridad": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "size"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Azul",
+            "Blanco",
+            "Marron",
+            "Moro",
+            "NEGRO",
+            "Negro",
+            "Nogal",
+            "Rosado"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 1 PAR",
+            "CAJA 20 PARES",
+            "CAJA X 1 PAR",
+            "SACO 10 PARES",
+            "SACO 12 PARES",
+            "SACO 20 PARES",
+            "SACO 7 PARES"
+          ]
+        },
+        "size": {
+          "type": "choice",
+          "question": "De que tamano?",
+          "options": [
+            "Talla 34",
+            "Talla 35",
+            "Talla 36",
+            "Talla 37",
+            "Talla 38",
+            "Talla 39",
+            "Talla 40",
+            "Talla 41",
+            "Talla 42",
+            "Talla 43",
+            "Talla 44",
+            "Talla 45",
+            "Talla 46"
+          ]
+        }
+      }
+    },
+    "Baños": {
+      "required_fields": [
+        "color",
+        "type",
+        "size",
+        "measure",
+        "thickness",
+        "weight",
+        "material"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Blanco",
+            "Boné",
+            "Bronce",
+            "Cromado",
+            "Dorado",
+            "Negro",
+            "black"
+          ]
+        },
+        "type": {
+          "type": "text",
+          "question": "De que tipo?"
+        },
+        "size": {
+          "type": "text",
+          "question": "De que tamano?"
+        },
+        "measure": {
+          "type": "text",
+          "question": "De que medida?"
+        },
+        "thickness": {
+          "type": "text",
+          "question": "De que espesor?"
+        },
+        "weight": {
+          "type": "text",
+          "question": "De que peso?"
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Acero Inoxidable",
+            "Bronce",
+            "Bronce cromado",
+            "Bronce niquelado",
+            "Loza Vitrificada",
+            "Loza vitrificada",
+            "Metálico",
+            "Polipropileno"
+          ]
+        }
+      }
+    },
+    "Pinturas Especiales": {
+      "required_fields": [
+        "color",
+        "presentation"
+      ],
+      "field_options": {
+        "color": {
+          "type": "text",
+          "question": "De que color?"
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "1 Gl",
+            "1/4 Gl"
+          ]
+        }
+      }
+    },
+    "UF": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "text",
+          "question": "De que medida?"
+        }
+      }
+    },
+    "Impermeabilizantes para Estructuras": {
+      "required_fields": [
+        "weight"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "text",
+          "question": "De que peso?"
+        }
+      }
+    },
+    "Guantes": {
+      "required_fields": [
+        "color",
+        "presentation"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "AMARILLO",
+            "AZUL",
+            "Amarillo",
+            "BLANCO",
+            "Blanco",
+            "GRIS",
+            "Gris",
+            "MORADO",
+            "NARANJA",
+            "NEGRO",
+            "Plomo/Verde",
+            "ROJO",
+            "ROJO VINO",
+            "Rojo",
+            "Rojo/Amarillo",
+            "VERDE"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 1 PAR",
+            "CAJA 100 PARES",
+            "CAJA 120",
+            "CAJA 120 PARES",
+            "CAJA 144 PARES",
+            "CAJA 60 PARES"
+          ]
+        }
+      }
+    },
+    "Aditivos para Concreto": {
+      "required_fields": [
+        "weight"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "text",
+          "question": "De que peso?"
+        }
+      }
+    },
+    "Ropa Industrial": {
+      "required_fields": [
+        "color",
+        "presentation"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Amarillo",
+            "Amarillo Talla L",
+            "Amarillo Talla XL",
+            "Azul",
+            "Azul Talla L",
+            "Azul Tallla XL",
+            "BLANCO",
+            "GRIS",
+            "Gris",
+            "MARRON",
+            "NARANJA",
+            "Naranja",
+            "Naranja Talla L",
+            "Naranja Talla XL",
+            "Verde",
+            "Verde Talla L"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA 10 UND",
+            "CAJA 100 UND",
+            "CAJA 20 UND",
+            "CAJA 25 UND",
+            "CAJA 50 UND",
+            "CAJA X 25"
+          ]
+        }
+      }
+    },
+    "Lentes": {
+      "required_fields": [
+        "color",
+        "presentation",
+        "type"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "LUNA AMBAR",
+            "LUNA CLARA",
+            "LUNA INDOOR/OUTDOOR",
+            "LUNA OSCURA",
+            "LUNA REFLEX",
+            "NEGRO",
+            "Negro con amarillo"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "CAJA X 12",
+            "CJA X 12"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "ANTIEMPAÑO",
+            "ANTIRAYADURA"
+          ]
+        }
+      }
+    },
+    "Duchas": {
+      "required_fields": [
+        "type"
+      ],
+      "field_options": {
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "1",
+            "MEZCLADORA DUCHA (Agua fria y caliente",
+            "MEZCLADORA MONOCOMANDO DUCHA (Agua fria y caliente)",
+            "MEZCLADORA MONOCOMANDO DUCHA (agua fria y caliente)",
+            "Mezcladora Monocomando ducha",
+            "Mezcladora para ducha",
+            "Mezcladora para ducha (agua fria y caliente)",
+            "Monocomando de ducha",
+            "Monocomando ducha",
+            "Registro 2\" redondo",
+            "Registro 4\" redondo",
+            "Sumidero 2\" decorativo",
+            "Sumidero 4\" redondo",
+            "Suspendido"
+          ]
+        }
+      }
+    },
+    "Cocinas": {
+      "required_fields": [
+        "color",
+        "type",
+        "model",
+        "size",
+        "measure",
+        "thickness",
+        "weight",
+        "material"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Cromado",
+            "Cromado y Black",
+            "Negro",
+            "black"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "LLAVE LAVADERO MUEBLE (Agua fria)",
+            "LLAVE LAVADERO PARED (Agua fria)",
+            "Lavadero",
+            "Llave Lavadero (Agua fria)",
+            "Llave lavadero mueble",
+            "Llave para bar",
+            "Llave para lavadero",
+            "MEZCLADORA LAVADERO PARED (Agua frio y caliente)",
+            "MEZCLADORA PARED FLEXIBLE (Agua fria y caliente)",
+            "Mezcladora Monocomando Lavadero mueble (Agua fria y caliente)",
+            "Mezcladora Monocomando para lavadero al mueble",
+            "Mezcladora Monocomando para lavadero al mueble (Agua fría y caliente)",
+            "Mezcladora monocomando",
+            "Monocomando para lavadero (Agua fria y caliente)"
+          ]
+        },
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "Acapulco",
+            "Aquarius",
+            "Artic",
+            "Avante",
+            "Bali",
+            "Barú",
+            "Buzios",
+            "Cosmopolitan",
+            "Egeo",
+            "Flex",
+            "Inox",
+            "Lever",
+            "Maui",
+            "Night",
+            "Portofino",
+            "Punta sal",
+            "Tahití",
+            "Temporizada",
+            "Vallarta"
+          ]
+        },
+        "size": {
+          "type": "text",
+          "question": "De que tamano?"
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "10 cm",
+            "15.5 cm",
+            "16 cm",
+            "168 mm",
+            "17.80 cm",
+            "178 mm",
+            "20 cm",
+            "200 mm",
+            "202 mm",
+            "26 cm",
+            "27 cm",
+            "28 cm",
+            "37 mm",
+            "56 cm",
+            "57 cm",
+            "8 cm",
+            "9 cm"
+          ]
+        },
+        "thickness": {
+          "type": "text",
+          "question": "De que espesor?"
+        },
+        "weight": {
+          "type": "text",
+          "question": "De que peso?"
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Acero Inoxidable",
+            "Bronce",
+            "Bronce cromado",
+            "Bronce y silicona"
+          ]
+        }
+      }
+    },
+    "Cerámicos": {
+      "required_fields": [
+        "measure",
+        "weight"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "20x61 cm",
+            "27x45 cm",
+            "30x30",
+            "30x60 cm",
+            "45x45 cm",
+            "60x60",
+            "60x60 cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1.63 kg",
+            "11.8",
+            "17.28",
+            "2.05 kg",
+            "2.75 kg",
+            "2.92 kg",
+            "6.47 kg"
+          ]
+        }
+      }
+    },
+    "Epóxicos, Morteros y Grouting": {
+      "required_fields": [
+        "weight"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1 Kg",
+            "1 Kilo",
+            "1 kilo",
+            "1.23",
+            "15 Kilos",
+            "25.1",
+            "27 Kilos",
+            "30 Kilos",
+            "30 kilos",
+            "30.1",
+            "300 ml.",
+            "4 Litros",
+            "4.206",
+            "5 Kg",
+            "5 kilos",
+            "5.45",
+            "600 ml"
+          ]
+        }
+      }
+    },
+    "Solventes": {
+      "required_fields": [
+        "volume"
+      ],
+      "field_options": {
+        "volume": {
+          "type": "choice",
+          "question": "De que volumen?",
+          "options": [
+            "1 gl",
+            "1/16 gln - 8oz",
+            "1/32 gln - 4 oz",
+            "1/4 gln - 32oz",
+            "1/64 gln - 2oz",
+            "1/8 gln - 16oz"
+          ]
+        }
+      }
+    },
+    "Industriales": {
+      "required_fields": [
+        "color",
+        "type",
+        "model",
+        "measure",
+        "weight",
+        "material"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "AMARILLO",
+            "AMARILLO MEDIANO",
+            "AZUL NAVAL",
+            "BLANCO",
+            "CELESTE",
+            "GRIS CLARO",
+            "GRIS MEDIANO",
+            "Gris",
+            "NARANJA INTERNACIONAL",
+            "NEGRO",
+            "ROJO",
+            "VERDE MEDIANO",
+            "ZINCROMATO"
+          ]
+        },
+        "type": {
+          "type": "choice",
+          "question": "De que tipo?",
+          "options": [
+            "Alquídico",
+            "Barniz",
+            "Epóxico",
+            "Gloss",
+            "Tráfico"
+          ]
+        },
+        "model": {
+          "type": "choice",
+          "question": "De que modelo?",
+          "options": [
+            "Barniz Ignifugo",
+            "Cromato de Zinc",
+            "Epóxico",
+            "Epóxico Piscina",
+            "Epóxico Zincromato",
+            "Gloss",
+            "Mastic 850",
+            "Tráfico TTP-115 F"
+          ]
+        },
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "22.5x19x19",
+            "22.5x19x20",
+            "22.5x19x22",
+            "24x21x28",
+            "24x21x29",
+            "40x20x20"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "12",
+            "26",
+            "45051",
+            "45144",
+            "5.5 kg"
+          ]
+        },
+        "material": {
+          "type": "choice",
+          "question": "De que material?",
+          "options": [
+            "Caja Kit",
+            "Envase Hojalata"
+          ]
+        }
+      }
+    },
+    "Barras de Acero": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "1 3/8\" x 9 mts",
+            "1\" x 9 mts",
+            "1/2\" x 9 mts",
+            "12 mm x 9 mts",
+            "3/4\" x 9 mts",
+            "3/8\" x 9 mts",
+            "4.7 mm x 8.8 mts",
+            "5/8\" x 9 mts",
+            "6 mm x 9 mts",
+            "8 mm x 9 mts"
+          ]
+        }
+      }
+    },
+    "Techos": {
+      "required_fields": [
+        "measure",
+        "weight"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "12.5cm x 42.5cm x 39cm x 15cm",
+            "15 x 29.5 x 29.5 cm",
+            "20cm x 40.6cm x 12cm",
+            "20cm x 40.6cm x 15cm",
+            "20cm x 40.6cm x 36cm x 12cm",
+            "20cm x 40.6cm x 36cm x 15cm",
+            "25 cm x 39 x 15",
+            "25cm x 42.5cm x 39cm x 15cm",
+            "25cm x 42.5cm x 39cm x 20cm",
+            "25cm x 42.5cm x 39cm x 6cm x 3.5cm",
+            "30 cm x 30 cm x 12 cm",
+            "30 cm x 30 cm x 15 cm",
+            "30 cm x 30 cm x 20 cm",
+            "30cm x 30cm x 12cm",
+            "30cm x 30cm x 15cm",
+            "30cm x 30cm x 20cm",
+            "30cm x 30cm x 8cm",
+            "30cm x30cm x 8cm"
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "10.1",
+            "10.4",
+            "11.9",
+            "4.5",
+            "4.6",
+            "4.8",
+            "5.7",
+            "6.6",
+            "6.8",
+            "7.4",
+            "7.5",
+            "7.8",
+            "8.1",
+            "8.3",
+            "9.2",
+            "9.5"
+          ]
+        }
+      }
+    },
+    "Tubería Eléctrica": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "1 1/2\"",
+            "1\"",
+            "1/2\"",
+            "1/4\"",
+            "110mm/hdep 450",
+            "110mm/hdep 750",
+            "160mm/hdep 450",
+            "160mm/hdep 750",
+            "2 1/2\"",
+            "2\"",
+            "200mm/hdep 450",
+            "200mm/hdep 750",
+            "250mm/ hdep 450",
+            "250mm/ hdep 750",
+            "3\"",
+            "3/4\"",
+            "4\"",
+            "63mm/hdep 450",
+            "63mm/hdep 750"
+          ]
+        }
+      }
+    },
+    "Cascos": {
+      "required_fields": [
+        "color",
+        "presentation"
+      ],
+      "field_options": {
+        "color": {
+          "type": "choice",
+          "question": "De que color?",
+          "options": [
+            "Amarillo",
+            "Azul",
+            "Blanco",
+            "Luna Claro",
+            "NEGRO",
+            "Naranja",
+            "Negro",
+            "Pin Lock",
+            "Plástico",
+            "Ratchet",
+            "Rojo",
+            "Verde"
+          ]
+        },
+        "presentation": {
+          "type": "choice",
+          "question": "En que presentacion?",
+          "options": [
+            "BOLSA X 25",
+            "BOLSA X 50",
+            "CAJA 100 UND",
+            "CAJA 125 UND",
+            "CAJA 25 UND",
+            "CAJA X 32",
+            "PAQUETE 100"
+          ]
+        }
+      }
+    },
+    "Selladores de Juntas": {
+      "required_fields": [
+        "weight"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "0.9 Kg",
+            "290 ml",
+            "290 ml.",
+            "3.2",
+            "3.861",
+            "300 ml.",
+            "4.15",
+            "4.403",
+            "4.484",
+            "4.523",
+            "4.572",
+            "4.587",
+            "4.632"
+          ]
+        }
+      }
+    },
+    "Muros y tabiquería": {
+      "required_fields": [
+        "measure",
+        "weight"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "11 x 21.5 x 9 cm",
+            "21.5 cm x 10.5 cm x 8.8 cm",
+            "22.5 cm x 12.2 cm x 9 cm",
+            "23cm x 11cm x 9cm",
+            "23cm x 12.5cm x 9cm",
+            "23cm x 12.5cm x 9xm",
+            "24 cm x 13 cm x 9 cm",
+            "24cm x 13cm x 9cm",
+            "25cm x 8cm x 15cm",
+            "34cm x 10cm x 19cm",
+            "34cm x 12cm x 18cm",
+            "34cm x 8cm x 18cm",
+            "8 cm x 25 cm x 14 cm",
+            "9 x 12.5 x23 cm."
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1.8",
+            "2.1",
+            "2.2",
+            "2.5",
+            "2.8",
+            "2.9",
+            "3.1",
+            "3.2",
+            "4.1",
+            "4.5",
+            "5",
+            "5.1"
+          ]
+        }
+      }
+    },
+    "Desmoldantes": {
+      "required_fields": [
+        "weight"
+      ],
+      "field_options": {
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "18",
+            "19",
+            "20",
+            "20 Litros",
+            "200",
+            "200 Litros",
+            "229",
+            "230",
+            "3.71",
+            "3.93",
+            "4.02",
+            "4.092"
+          ]
+        }
+      }
+    },
+    "Arcilla": {
+      "required_fields": [
+        "measure",
+        "weight",
+        "volume"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "12x30x30 cm.",
+            "15x30x30 cm.",
+            "15x8x25 cm.",
+            "20x30x30 cm.",
+            "24x3x24 cm.",
+            "25x30x30 cm.",
+            "6x12.5x23 cm.",
+            "8x30x30 cm.",
+            "9x10.5x23 cm.",
+            "9x12.5x23 cm.",
+            "9x13x24 cm."
+          ]
+        },
+        "weight": {
+          "type": "choice",
+          "question": "De que peso?",
+          "options": [
+            "1,90",
+            "10,00",
+            "12,25",
+            "2,00",
+            "2,30",
+            "2,70",
+            "3,10",
+            "3,80",
+            "4,50",
+            "6,20",
+            "7,60"
+          ]
+        },
+        "volume": {
+          "type": "choice",
+          "question": "De que volumen?",
+          "options": [
+            "108.0",
+            "135",
+            "17.3",
+            "180.0",
+            "21.7",
+            "225.0",
+            "25.9",
+            "28.0",
+            "28.1",
+            "72"
+          ]
+        }
+      }
+    },
+    "Clavos": {
+      "required_fields": [
+        "measure"
+      ],
+      "field_options": {
+        "measure": {
+          "type": "choice",
+          "question": "De que medida?",
+          "options": [
+            "1 1/2\"",
+            "1\"",
+            "2 1/2\"",
+            "2\"",
+            "3\"",
+            "4\""
+          ]
+        }
+      }
+    }
+  }
+}

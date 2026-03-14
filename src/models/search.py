@@ -32,7 +32,6 @@ def inventory_result_to_dict(result: InventorySearchResult) -> dict:
         "stock": result.stock,
         "category": result.category,
         "subcategory": result.subcategory,
-        "categories": result.categories,
         "currency": result.currency,
         "price": result.price,
         "price_b2b_def": result.price_b2b_def,
