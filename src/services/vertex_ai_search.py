@@ -27,7 +27,6 @@ class InventorySearchResult:
     # Clasificacion
     category: str = ""
     subcategory: str = ""
-    categories: list[str] = field(default_factory=list)
 
     # Precios
     currency: str = ""
@@ -72,6 +71,12 @@ class VertexAISearchService:
             client_options={"api_endpoint": api_endpoint}
         )
 
+    @staticmethod
+    def _extract_first(value) -> str:
+        if isinstance(value, list):
+            return value[0] if value else ""
+        return str(value) if value else ""
+
     @property
     def serving_config(self) -> str:
         return (
@@ -114,9 +119,8 @@ class VertexAISearchService:
             status=data.get("status", ""),
             unity=data.get("unity", ""),
             stock=data.get("stock", ""),
-            category=data.get("category", ""),
-            subcategory=data.get("subcategory", ""),
-            categories=data.get("categories", []),
+            category=self._extract_first(data.get("categories", "")),
+            subcategory=self._extract_first(data.get("subcategories", "")),
             currency=data.get("currency", ""),
             price=float(data.get("price", 0.0)),
             price_b2b_def=float(data.get("price_b2b_def", 0.0)),
