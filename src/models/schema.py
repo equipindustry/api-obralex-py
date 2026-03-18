@@ -15,6 +15,7 @@ class InventorySchemaResponse(BaseModel):
     required_fields: list[str]
     field_options: dict[str, FieldOption]
     schema_source: str
+    available_subcategories: list[str] | None = None
 
 
 class SchemaStatusResponse(BaseModel):
