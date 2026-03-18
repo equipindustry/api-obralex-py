@@ -45,10 +45,60 @@ class InventorySchemaService:
         blob = bucket.blob(self._blob_path)
         content = blob.download_as_text()
         self._cache = json.loads(content)
+        self._build_category_schemas()
         self._loaded_at = time.time()
         logger.info(
-            "Schemas loaded from gs://%s/%s", self._bucket_name, self._blob_path
+            "Schemas loaded from gs://%s/%s (%d subcategories, %d categories)",
+            self._bucket_name,
+            self._blob_path,
+            len(self._cache.get("subcategory_schemas", {})),
+            len(self._cache.get("category_schemas", {})),
         )
+
+    def _build_category_schemas(self) -> None:
+        """Build category_schemas from subcategory_schemas if not present in the JSON."""
+        if self._cache.get("category_schemas"):
+            return
+
+        sub_schemas = self._cache.get("subcategory_schemas", {})
+        category_map: dict[str, list[str]] = {}
+        for sub_name, sub_schema in sub_schemas.items():
+            cat = sub_schema.get("category")
+            if cat:
+                category_map.setdefault(cat, []).append(sub_name)
+
+        category_schemas = {}
+        for cat, subcategories in category_map.items():
+            all_fields: dict[str, dict] = {}
+            required_set: set[str] = set()
+            for sub_name in subcategories:
+                sub = sub_schemas[sub_name]
+                required_set.update(sub.get("required_fields", []))
+                for field_name, field_def in sub.get("field_options", {}).items():
+                    if field_name not in all_fields:
+                        all_fields[field_name] = {
+                            "type": field_def["type"],
+                            "question": field_def["question"],
+                        }
+                        if field_def.get("options"):
+                            all_fields[field_name]["options"] = list(field_def["options"])
+                    elif field_def.get("options"):
+                        existing = all_fields[field_name]
+                        if existing.get("options") is not None:
+                            merged = set(existing["options"]) | set(field_def["options"])
+                            existing["options"] = sorted(merged)
+                        else:
+                            existing["type"] = "choice"
+                            existing["options"] = list(field_def["options"])
+
+            category_schemas[cat] = {
+                "required_fields": sorted(required_set),
+                "field_options": all_fields,
+                "subcategories": sorted(subcategories),
+            }
+
+        self._cache["category_schemas"] = category_schemas
+        logger.info("Built category_schemas for %d categories from subcategory data", len(category_schemas))
 
     def _get_schemas(self) -> dict:
         if self._cache is None or self._is_expired():
@@ -96,7 +146,7 @@ class InventorySchemaService:
             schema = DEFAULT_SCHEMA
             source = "default"
 
-        return {
+        result = {
             "category": category,
             "subcategory": subcategory,
             "inventory_hint": product.product,
@@ -104,6 +154,11 @@ class InventorySchemaService:
             "field_options": schema["field_options"],
             "schema_source": source,
         }
+
+        if source == "category" and schema.get("subcategories"):
+            result["available_subcategories"] = schema["subcategories"]
+
+        return result
 
     def reload(self) -> dict:
         self._load_from_gcs()
