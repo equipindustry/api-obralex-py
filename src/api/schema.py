@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Query
 
-from src.models.schema import InventorySchemaResponse, SchemaStatusResponse
+from src.models.schema import (
+    CatalogResponse,
+    InventorySchemaResponse,
+    SchemaStatusResponse,
+)
 
 from src.services import VertexAISearchService, InventorySchemaService
 
@@ -23,6 +27,11 @@ async def get_inventory_schema(
     query: str = Query(..., min_length=1, description="Inventario a buscar"),
 ):
     return _schema_service.get_schema_for_query(query)
+
+
+@router.get("/schemas/catalog", response_model=CatalogResponse)
+async def get_catalog():
+    return _schema_service.get_catalog()
 
 
 @router.post("/schemas/reload")

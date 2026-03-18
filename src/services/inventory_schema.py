@@ -164,6 +164,38 @@ class InventorySchemaService:
         self._load_from_gcs()
         return self._cache
 
+    def get_catalog(self) -> dict:
+        schemas = self._get_schemas()
+        sub_schemas = schemas.get("subcategory_schemas", {})
+
+        category_map: dict[str, list[dict]] = {}
+        for sub_name, sub_schema in sub_schemas.items():
+            cat = sub_schema.get("category", "Sin categoría")
+            category_map.setdefault(cat, []).append(
+                {
+                    "subcategory": sub_name,
+                    "required_fields": sub_schema.get("required_fields", []),
+                    "field_options": sub_schema.get("field_options", {}),
+                }
+            )
+
+        for subs in category_map.values():
+            subs.sort(key=lambda s: s["subcategory"])
+
+        categories = sorted(
+            [
+                {"category": cat, "subcategories": subs}
+                for cat, subs in category_map.items()
+            ],
+            key=lambda c: c["category"],
+        )
+
+        return {
+            "total_categories": len(categories),
+            "total_subcategories": len(sub_schemas),
+            "categories": categories,
+        }
+
     def status(self) -> dict:
         schemas = self._cache or {}
         return {
