@@ -31,6 +31,7 @@ La API estara disponible en `http://localhost:8000`
 | `/api/v1/search`             | GET    | Buscar inventarios en Vertex AI Search                |
 | `/api/v1/search/summary`     | GET    | Buscar con resumen generado por IA                    |
 | `/api/v1/inventories/schema` | GET    | Obtener required_fields y field_options para un query |
+| `/api/v1/schemas/catalog`    | GET    | Catalogo de categorias y subcategorias con sus campos |
 | `/api/v1/schemas/status`     | GET    | Estado del cache de schemas                           |
 | `/api/v1/schemas/reload`     | POST   | Forzar recarga de schemas desde Cloud Storage         |
 | `/docs`                      | GET    | Documentacion interactiva (Swagger)                   |
@@ -64,7 +65,7 @@ src/
 ### Servicios principales
 
 - **VertexAISearchService** — Busca inventarios en Google Discovery Engine (Vertex AI Search). Usa `MessageToDict` de protobuf para parsear `struct_data` y `_extract_first()` para manejar campos que vienen como arrays desde BigQuery (ej: `categories`, `subcategories`).
-- **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default.
+- **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default. Si el JSON solo contiene `subcategory_schemas`, construye automaticamente `category_schemas` agrupando subcategorias por categoria (union de campos requeridos y merge de opciones). Expone tambien un catalogo completo de categorias/subcategorias con detalle de campos via `get_catalog()`.
 
 ### Terminologia
 

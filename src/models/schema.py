@@ -18,6 +18,23 @@ class InventorySchemaResponse(BaseModel):
     available_subcategories: list[str] | None = None
 
 
+class SubcategoryDetail(BaseModel):
+    subcategory: str
+    required_fields: list[str]
+    field_options: dict[str, FieldOption]
+
+
+class CategoryDetail(BaseModel):
+    category: str
+    subcategories: list[SubcategoryDetail]
+
+
+class CatalogResponse(BaseModel):
+    total_categories: int
+    total_subcategories: int
+    categories: list[CategoryDetail]
+
+
 class SchemaStatusResponse(BaseModel):
     loaded: bool
     loaded_at: float
