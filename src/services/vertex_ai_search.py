@@ -2,7 +2,6 @@ from google.cloud import discoveryengine_v1 as discoveryengine
 from google.protobuf.json_format import MessageToDict
 from dataclasses import dataclass, field
 from typing import Any
-import json
 
 
 @dataclass
@@ -12,37 +11,57 @@ class InventorySearchResult:
 
     # Identificadores
     id: str = ""
-    sku: str = ""
     sku_equip: str = ""
-    sku_parent: str = ""
 
     # Producto
     product: str = ""
     description: str = ""
     brand: str = ""
-    status: str = ""
     unity: str = ""
     stock: str = ""
 
     # Clasificacion
     category: str = ""
     subcategory: str = ""
+    cluster: str = ""
+    compilation: str = ""
 
     # Precios
     currency: str = ""
     price: float = 0.0
     price_b2b_def: float = 0.0
+    price_b2b_inf: float = 0.0
     price_b2c_def: float = 0.0
+    price_b2c_inf: float = 0.0
 
     # Atributos
-    variant: str = ""
     color: str = ""
+    presentation: str = ""
+    type: str = ""
     model: str = ""
     size: str = ""
+    measure: str = ""
+    thickness: str = ""
+    weight: str = ""
+    volume: str = ""
+    angle: str = ""
+    fabrication: str = ""
     material: str = ""
+    reference: str = ""
 
     # Media
     image0: str = ""
+    image1: str = ""
+    image2: str = ""
+    image3: str = ""
+    techsheet_url: str = ""
+
+    # Busqueda
+    keywords: list[str] = field(default_factory=list)
+
+    # Metadata
+    account_id: str = ""
+    synced_at: str = ""
 
     # Raw data
     raw: dict[str, Any] = field(default_factory=dict)
@@ -68,12 +87,6 @@ class VertexAISearchService:
 
         api_endpoint = f"{self.location}-discoveryengine.googleapis.com"
         return discoveryengine.SearchServiceClient(client_options={"api_endpoint": api_endpoint})
-
-    @staticmethod
-    def _extract_first(value) -> str:
-        if isinstance(value, list):
-            return value[0] if value else ""
-        return str(value) if value else ""
 
     @property
     def serving_config(self) -> str:
@@ -108,27 +121,43 @@ class VertexAISearchService:
             document_id=result.document.id,
             relevance_score=getattr(result, "relevance_score", 0.0),
             id=data.get("id", ""),
-            sku=data.get("sku", ""),
             sku_equip=data.get("sku_equip", ""),
-            sku_parent=data.get("sku_parent", ""),
             product=data.get("product", ""),
             description=data.get("description", ""),
             brand=data.get("brand", ""),
-            status=data.get("status", ""),
             unity=data.get("unity", ""),
             stock=data.get("stock", ""),
-            category=self._extract_first(data.get("categories", "")),
-            subcategory=self._extract_first(data.get("subcategories", "")),
+            category=data.get("category", ""),
+            subcategory=data.get("subcategory", ""),
+            cluster=data.get("cluster", ""),
+            compilation=data.get("compilation", ""),
             currency=data.get("currency", ""),
             price=float(data.get("price", 0.0)),
             price_b2b_def=float(data.get("price_b2b_def", 0.0)),
+            price_b2b_inf=float(data.get("price_b2b_inf", 0.0)),
             price_b2c_def=float(data.get("price_b2c_def", 0.0)),
-            variant=data.get("variant", ""),
+            price_b2c_inf=float(data.get("price_b2c_inf", 0.0)),
             color=data.get("color", ""),
+            presentation=data.get("presentation", ""),
+            type=data.get("type", ""),
             model=data.get("model", ""),
             size=data.get("size", ""),
+            measure=data.get("measure", ""),
+            thickness=data.get("thickness", ""),
+            weight=data.get("weight", ""),
+            volume=data.get("volume", ""),
+            angle=data.get("angle", ""),
+            fabrication=data.get("fabrication", ""),
             material=data.get("material", ""),
+            reference=data.get("reference", ""),
             image0=data.get("image0", ""),
+            image1=data.get("image1", ""),
+            image2=data.get("image2", ""),
+            image3=data.get("image3", ""),
+            techsheet_url=data.get("techsheet_url", ""),
+            keywords=data.get("keywords", []),
+            account_id=data.get("account_id", ""),
+            synced_at=data.get("synced_at", ""),
             raw=data,
         )
 
