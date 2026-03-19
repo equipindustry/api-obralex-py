@@ -64,19 +64,19 @@ src/
 
 ### Servicios principales
 
-- **VertexAISearchService** — Busca inventarios en Google Discovery Engine (Vertex AI Search). Usa `MessageToDict` de protobuf para parsear `struct_data` y `_extract_first()` para manejar campos que vienen como arrays desde BigQuery (ej: `categories`, `subcategories`).
-- **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default. Si el JSON solo contiene `subcategory_schemas`, construye automaticamente `category_schemas` agrupando subcategorias por categoria (union de campos requeridos y merge de opciones). Expone tambien un catalogo completo de categorias/subcategorias con detalle de campos via `get_catalog()`.
+- **VertexAISearchService** — Busca inventarios en Google Discovery Engine (Vertex AI Search). Usa `MessageToDict` de protobuf para parsear `struct_data`. Los campos mapean 1:1 con la tabla BigQuery `inventories-simplify-prod` (nombres singulares: `category`, `subcategory`).
+- **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default. Si el JSON solo contiene `subcategory_schemas`, construye automaticamente `category_schemas` agrupando subcategorias por categoria (union de campos requeridos y merge de opciones). Expone tambien un catalogo completo de categorias/subcategorias con detalle de campos via `get_catalog()`. Schemas actuales: Cables (Electricidad), Barras de Acero y Clavos (Acero).
 
 ### Terminologia
 
-- **Inventory** = material en almacen de la startup (lo que tenemos en stock)
+- **Inventory** = material en almacen de la startup (lo que tenemos en stock). Fuente: MongoDB `inventories`, sincronizado a BigQuery (`inventories-simplify-prod`) via `api-adatrack` e indexado en Vertex AI Search.
 - **Product** = material que solicita el cliente (lo que quiere cotizar)
 
 ### Mapeo de campos BigQuery
 
-La tabla `inventories_sanitized_prod` usa nombres en plural (`categories`, `subcategories`). En el codigo se mapean a singular (`category`, `subcategory`) en el dataclass `InventorySearchResult`. Vertex AI Search puede retornarlos como arrays, por eso `_extract_first()` maneja la conversion.
+La tabla `inventories-simplify-prod` usa nombres singulares (`category`, `subcategory`) que mapean 1:1 al dataclass `InventorySearchResult` (~37 campos). Campos organizados en: identificadores (`id`, `sku_equip`), producto (`product`, `description`, `brand`, `unity`, `stock`), clasificacion (`category`, `subcategory`, `cluster`, `compilation`), 13 atributos (`color`, `presentation`, `type`, `model`, `size`, `measure`, `thickness`, `weight`, `volume`, `angle`, `fabrication`, `material`, `reference`), precios (`price`, `price_b2b_def`, `price_b2b_inf`, `price_b2c_def`, `price_b2c_inf`, `currency`), media (`image0`–`image3`, `techsheet_url`), busqueda (`keywords` como array) y metadata (`account_id`, `synced_at`).
 
-Existe un campo `keywords` en BigQuery con sinonimos peruanos de construccion (ej: "fierro" -> "barra de acero") para mejorar la relevancia de busqueda. Este campo es generado por `api-adatrack` durante la sincronizacion. Ver `docs/PLAN_KEYWORDS_SYNONYMS.md` para el diccionario completo.
+El campo `keywords` contiene sinonimos peruanos de construccion (ej: "fierro" -> "barra de acero") generados por `api-adatrack` durante la sincronizacion. Ver `docs/PLAN_KEYWORDS_SYNONYMS.md` para el diccionario completo.
 
 ## Vertex AI Search: App vs Datastore
 
@@ -93,7 +93,7 @@ El codigo accede al serving config directamente por la ruta del datastore (`data
 
 Los campos del schema del datastore deben configurarse explicitamente:
 
-- **Searchable** — el motor los usa para rankear resultados (activar para: `product`, `description`, `brand`, `categories`, `subcategories`, `keywords`)
+- **Searchable** — el motor los usa para rankear resultados (activar para: `product`, `description`, `brand`, `category`, `subcategory`, `keywords`)
 - **Retrievable** — se retornan en la respuesta de la API via `struct_data` (activar para todos los campos necesarios en la respuesta)
 - **Indexable** — permite filtrado exacto (activar segun necesidad)
 
@@ -141,9 +141,7 @@ docker push us-central1-docker.pkg.dev/maia-466013/ar-api-obralex-prod/api-obral
 
 ## Dataset de inventarios
 
-El datastore de Vertex AI Search se alimenta desde una tabla BigQuery (`inventories_sanitized_prod`) con 3,091 registros de materiales de construccion, 12 categorias, 49 marcas y 39 columnas de atributos.
-
-Ver detalle completo y queries de prueba en `docs/inventories_sanitized_prod_v1.md`.
+El datastore de Vertex AI Search se alimenta desde la tabla BigQuery `inventories-simplify-prod` con 251 registros activos (categorias Acero y Electricidad). El dataset se expande incrementalmente a medida que se completan los mapeos de categorias en `api-adatrack`.
 
 ## Documentacion adicional
 
