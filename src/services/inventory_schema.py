@@ -120,6 +120,10 @@ class InventorySchemaService:
     # --- Public API ---
 
     def get_schema_for_query(self, query: str) -> dict:
+        schema, _ = self.get_schema_and_inventory(query)
+        return schema
+
+    def get_schema_and_inventory(self, query: str):
         results = self.search_service.search(query=query, page_size=1)
         if not results:
             return {
@@ -129,7 +133,7 @@ class InventorySchemaService:
                 "required_fields": DEFAULT_SCHEMA["required_fields"],
                 "field_options": DEFAULT_SCHEMA["field_options"],
                 "schema_source": "default",
-            }
+            }, None
 
         product = results[0]
         category = product.category
@@ -158,7 +162,7 @@ class InventorySchemaService:
         if source == "category" and schema.get("subcategories"):
             result["available_subcategories"] = schema["subcategories"]
 
-        return result
+        return result, product
 
     def reload(self) -> dict:
         self._load_from_gcs()

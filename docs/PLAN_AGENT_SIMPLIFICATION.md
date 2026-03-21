@@ -32,22 +32,27 @@ El agente mezcla deteccion con analisis de schema, lo cual genera:
 ┌─────────────────────────────────┐     ┌──────────────────────────────────────┐
 │        AGENTE (api-maia)        │     │       MCP SERVER (mcp-hub-equip)     │
 │                                 │     │                                      │
-│  Gemini detecta del mensaje:    │     │  Recibe lista de materials[]         │
-│  - materials: [                 │     │  Por cada material:                  │
-│      { description, quantity,   │     │    1. get_inventory_schema(desc)     │
-│        unit, brand }            │     │    2. Mapear atributos               │
-│    ]                            │     │    3. Calcular missing_attributes    │
-│  - delivery_location            │     │    4. Calcular completion_%          │
-│  - delivery_date                │     │    5. Calcular status                │
-│  - tax_id                       │     │    6. search si esta completo        │
-│  - email                        │     │                                      │
-│  - suggested_question           │     │  Retorna: products[] enriquecidos    │
+│  Gemini detecta del mensaje:    │     │  Recibe materials_structured[]       │
+│  - materials: string[]          │     │  Por cada material:                  │
+│    (para persistir en BD)       │     │    1. Vertex search(description)     │
+│  - materials_structured: [      │     │    2. Schema lookup → required_fields│
+│      { description, quantity,   │     │    3. Leer attributes de Vertex      │
+│        unit, brand }            │     │    4. Calcular missing_attributes    │
+│    ]                            │     │    5. Calcular completion_%          │
+│  - delivery_location            │     │    6. Calcular status                │
+│  - delivery_date                │     │                                      │
+│  - tax_id                       │     │  Retorna: products[] enriquecidos    │
+│  - email                        │     │    con original, product, brand,     │
+│  - suggested_question           │     │    attributes, required_fields,      │
 │                                 │     │    con original, product, brand,     │
-│  Llama: analyze_materials(      │     │    attributes, required_fields,      │
-│    materials=[{description:     │     │    missing_attributes, status,       │
-│    "fierros corrugados 1/2",    │     │    completion_%, match_id            │
-│    quantity: 10, unit: "varilla"│     │                                      │
-│    brand: null}, ...]           │     │                                      │
+│                                 │     │    missing_attributes, status,       │
+│  Llama: analyze_materials(      │     │    completion_%, match_id            │
+│    materials_structured=[       │     │                                      │
+│      {description:              │     │                                      │
+│       "fierros corrugados 1/2", │     │                                      │
+│       quantity: 10,             │     │                                      │
+│       unit: "varilla",          │     │                                      │
+│       brand: null}, ...]        │     │                                      │
 │  )                              │     │                                      │
 │                                 │     │                                      │
 │  Recibe products[] del MCP      │     │                                      │
@@ -65,7 +70,7 @@ El agente mezcla deteccion con analisis de schema, lo cual genera:
 ```
 Tool: analyze_materials
 Input:
-  materials: [                   # array de objetos (Gemini extrae los campos basicos)
+  materials_structured: [        # array de objetos (Gemini extrae los campos basicos)
     {
       "description": "fierros corrugados 1/2",   # descripcion del producto (sin cantidad/unidad/marca)
       "quantity": 10,                              # extraido por Gemini
@@ -106,18 +111,21 @@ Output:
 | `quantity` | Gemini | Es dato conversacional ("necesito 10...", "dame 50..."), trivial para un LLM |
 | `unit` | Gemini | Es dato conversacional ("bolsas", "rollos", "varillas"), trivial para un LLM |
 | `brand` | Gemini | Solo si el cliente la menciona explicitamente. Trivial para un LLM, dificil con regex |
-| `attributes` | MCP server | Requiere conocer el schema (required_fields, field_options). Es logica deterministica |
-| `category/subcategory` | MCP server | Requiere buscar en Vertex AI Search + mapear al schema |
-| `completion_%/status` | MCP server | Requiere calcular contra required_fields del schema |
+| `attributes` | api-obralex (via Vertex) | Vertex AI Search resuelve semanticamente los atributos del inventario mas cercano (ej. "2 pulgadas" → `measure: "2\""`) |
+| `category/subcategory` | api-obralex (via Vertex) | Vertex AI Search identifica categoria/subcategoria del inventario mas cercano |
+| `completion_%/status` | api-obralex | Calcula deterministicamente contra required_fields del schema |
 
-El MCP server internamente:
-1. Por cada material en `materials[]`, usa `description` para llamar `get_inventory_schema` → identificar categoria + required_fields
-2. Mapea valores de `description` a `attributes` tipados segun el schema
-3. Pasa `quantity`, `unit`, `brand` directamente al producto (vienen de Gemini)
-4. Calcula `missing_attributes` = required_fields que no estan en attributes
-5. Calcula `completion_percentage` y `status`
-6. Si completo, llama `search_construction_materials` para obtener `match_id`
-7. Retorna array de products enriquecidos
+El endpoint `POST /api/v1/materials/analyze` (api-obralex-py) internamente:
+1. Por cada material en `materials_structured[]`, usa `description` para una **unica busqueda en Vertex AI Search** que retorna:
+   - El `InventorySearchResult` con los atributos ya resueltos semanticamente (ej. "2 pulgadas" → `measure: "2\""`)
+   - La `category` y `subcategory` del inventario mas cercano
+2. Con la subcategoria/categoria, obtiene el schema (`required_fields`, `field_options`) via `InventorySchemaService`
+3. Lee los `attributes` directamente del resultado de Vertex (no parsea la description con regex)
+4. Pasa `quantity`, `unit`, `brand` directamente al producto (vienen de Gemini)
+5. Calcula `missing_attributes` = required_fields cuyos valores estan vacios en el inventario
+6. Calcula `completion_percentage` y `status`
+7. Si completo → el `match_id` ya lo tiene del resultado de Vertex (sin busqueda adicional)
+8. Retorna array de products enriquecidos
 
 ### Capa 2 — Prompt simplificado (api-maia)
 
@@ -130,7 +138,8 @@ FORMATO DE RESPUESTA:
   "delivery_date": "string o null",
   "tax_id": "string o null",
   "email": "string o null",
-  "materials": [
+  "materials": ["10 varillas de fierro corrugado de 1/2", "cable thw 14 rojo"],
+  "materials_structured": [
     {
       "description": "descripcion del producto (sin cantidad, unidad ni marca)",
       "quantity": number o null,
@@ -142,14 +151,16 @@ FORMATO DE RESPUESTA:
 }
 
 REGLAS:
-- materials = lista de objetos, uno por cada material mencionado por el cliente
-- description = SOLO la descripcion del producto y sus atributos tecnicos (ej. "fierros corrugados 1/2", "cable thw 14 rojo")
-- quantity = cantidad numerica (ej. 10, 50). null si no se menciono
-- unit = unidad de medida (ej. "bolsa", "rollo", "varilla", "metro"). null si no se menciono
-- brand = marca SOLO si el cliente la menciono explicitamente. null si no la menciono
+- materials = lista de strings, uno por cada material tal como lo menciona el cliente (para persistencia en BD)
+- materials_structured = mismos materiales pero desestructurados en campos:
+  - description = SOLO la descripcion del producto y sus atributos tecnicos (ej. "fierros corrugados 1/2", "cable thw 14 rojo")
+  - quantity = cantidad numerica (ej. 10, 50). null si no se menciono
+  - unit = unidad de medida (ej. "bolsa", "rollo", "varilla", "metro"). null si no se menciono
+  - brand = marca SOLO si el cliente la menciono explicitamente. null si no la menciono
 - NO incluir cantidad, unidad ni marca dentro de description
+- materials y materials_structured deben tener el mismo orden y cantidad de elementos
 - SIEMPRE acumular materiales de mensajes anteriores
-- Si el cliente actualiza info de un material existente, actualizar el objeto correspondiente
+- Si el cliente actualiza info de un material existente, actualizar en ambas listas
 ```
 
 **Se eliminan del prompt:**
@@ -170,12 +181,13 @@ await firestore_service.update_analysis_obralex(...)            # Persistir
 await bigquery_service.insert_analysis(...)                     # Persistir
 
 # Flujo propuesto (simple)
-result = await self.chat(message, history, system_instruction)  # Gemini detecta materials[]
+result = await self.chat(message, history, system_instruction)  # Gemini detecta materials + materials_structured
 detection = self._parse_detection_response(result["response"])  # Parse JSON simple
 products = await self.mcp_client.call_tool(                     # MCP enriquece
     "analyze_materials",
-    {"materials": [m.dict() for m in detection.materials]}       # [{description, quantity, unit, brand}]
+    {"materials_structured": [m.dict() for m in detection.materials_structured]}
 )
+# detection.materials (strings) se persiste directo en BD
 await firestore_service.update_analysis_obralex(...)            # Persistir
 await bigquery_service.insert_analysis(...)                     # Persistir
 ```
@@ -188,7 +200,7 @@ await bigquery_service.insert_analysis(...)                     # Persistir
 ### Capa 4 — Modelo simplificado (api-maia)
 
 ```python
-# Material detectado por Gemini (input para el MCP)
+# Material estructurado por Gemini (input para el MCP)
 class DetectedMaterial(BaseModel):
     description: str                          # "fierros corrugados 1/2"
     quantity: Optional[float] = None          # 10
@@ -201,7 +213,8 @@ class DetectionResult(BaseModel):
     delivery_date: Optional[str] = None
     tax_id: Optional[str] = None
     email: Optional[str] = None
-    materials: list[DetectedMaterial] = []    # objetos con description + metadata basica
+    materials: list[str] = []                         # strings raw para persistir en BD
+    materials_structured: list[DetectedMaterial] = []  # objetos para enviar al MCP
     suggested_question: Optional[str] = None
 
 # MaterialItem sigue igual (lo que retorna el MCP)
@@ -215,7 +228,7 @@ class DetectionResult(BaseModel):
 ```
 POST /materials/analyze
 Body: {
-  "materials": [
+  "materials_structured": [
     { "description": "fierros corrugados 1/2", "quantity": 10, "unit": "varilla", "brand": null },
     { "description": "cable thw 14 rojo", "quantity": 1, "unit": "rollo", "brand": null }
   ]
@@ -228,13 +241,14 @@ Response: {
 }
 ```
 
-**Logica interna:**
+**Logica interna (implementada en `MaterialAnalyzerService`):**
 1. Por cada material objeto:
-   - Usar `description` para llamar schema → identificar categoria + required_fields
-   - Mapear valores de `description` a `attributes` tipados segun el schema
-   - Pasar `quantity`, `unit`, `brand` directamente (vienen ya extraidos por Gemini)
-   - Calcular completitud contra required_fields
-   - Si completo → buscar en inventario
+   - `get_schema_and_inventory(description)` → una unica llamada a Vertex AI Search que retorna el schema + el `InventorySearchResult`
+   - Los `attributes` se leen directamente del resultado de Vertex (match semantico, no regex)
+   - `quantity`, `unit`, `brand` se pasan directamente (vienen de Gemini)
+   - Calcula `missing_attributes`, `completion_percentage`, `status` contra `required_fields` del schema
+   - Si completo → `match_id` ya viene del mismo resultado de Vertex (sin busqueda adicional)
+   - Si `schema_source == "default"` → retorna `status: "detected"` sin calcular completitud
 2. Retornar array de productos enriquecidos
 
 ---
@@ -249,7 +263,12 @@ Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de p
         │   (deteccion)   │
         └───────┬────────┘
                 │
-        materials: [
+        materials: [                          # strings para BD
+          "10 varillas de fierro corrugado de 1/2",
+          "1 rollo de cable thw 14 rojo",
+          "5 galones de pintura latex blanca"
+        ]
+        materials_structured: [              # objetos para MCP
           {desc: "fierros corrugados 1/2", qty: 10, unit: "varilla", brand: null},
           {desc: "cable thw 14 rojo",      qty: 1,  unit: "rollo",   brand: null},
           {desc: "pintura latex blanca",   qty: 5,  unit: "galon",   brand: null}
@@ -261,33 +280,37 @@ Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de p
         └───────┬────────┘
                 │
         ┌───────┴──────────────────────────────────────────┐
-        │ "10 fierros corrugados 1/2"                      │
-        │  → schema("fierro") → Barras de Acero            │
-        │  → schema_source: "subcategory"                  │
-        │  → required: [measure]                           │
-        │  → attributes: {measure: "1/2"}                  │
-        │  → missing: []                                   │
-        │  → completion: 100% → search → match_id          │
+        │ "fierros corrugados 1/2"                         │
+        │  → Vertex search → InventorySearchResult {       │
+        │      product:"fierro corrugado",                 │
+        │      category:"Acero", subcat:"Barras de Acero", │
+        │      measure:"1/2\" x 9 mts" }                  │
+        │  → schema: required=[measure]                    │
+        │  → attributes leidos de Vertex: {measure:✓}      │
+        │  → missing: [] → completion: 100%                │
+        │  → match_id: del mismo resultado Vertex          │
         │  → status: "complete"                            │
         ├──────────────────────────────────────────────────┤
         │ "cable thw 14 rojo"                              │
-        │  → schema("cable") → Cables                      │
-        │  → schema_source: "subcategory"                  │
-        │  → required: [cluster, compilation, color,       │
-        │     presentation, weight]                        │
-        │  → attributes: {cluster:"THW-90 BH", color:     │
-        │     "Rojo", ...}                                 │
+        │  → Vertex search → InventorySearchResult {       │
+        │      product:"cable", subcat:"Cables",           │
+        │      cluster:"THW-90 BH", color:"Rojo",         │
+        │      presentation:"", weight:"" }                │
+        │  → schema: required=[cluster,compilation,        │
+        │     color,presentation,weight]                   │
+        │  → attributes de Vertex: {cluster:✓, color:✓,    │
+        │     presentation:✗, weight:✗}                    │
         │  → missing: [presentation, weight]               │
         │  → completion: 60% → status: "incomplete"        │
         ├──────────────────────────────────────────────────┤
-        │ "5 galones de pintura latex blanca"              │
-        │  → schema("pintura") → sin schema                │
+        │ "pintura latex blanca"                           │
+        │  → Vertex search → sin schema para categoria     │
         │  → schema_source: "default"                      │
         │  → category: "Pinturas" (de Vertex)              │
         │  → deteccion basica: product, quantity, unit,    │
-        │     brand (si explicito)                         │
+        │     brand (de Gemini)                            │
         │  → status: "detected"                            │
-        │  → completion: null (sin schema para calcular)   │
+        │  → completion: null (sin schema)                 │
         └──────────────────────────────────────────────────┘
                 │
         ┌───────┴────────┐
@@ -297,17 +320,109 @@ Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de p
         └────────────────┘
 ```
 
+## Implementacion Fase 1 (api-obralex-py) — COMPLETADA
+
+### Archivos creados
+
+| Archivo | Proposito |
+|---------|-----------|
+| `src/models/materials.py` | `DetectedMaterial` (input), `EnrichedProduct` (output), request/response models |
+| `src/services/material_analyzer.py` | `MaterialAnalyzerService` — orquesta: Vertex search → schema lookup → atributos → completitud |
+| `src/api/materials.py` | Router con `POST /api/v1/materials/analyze` |
+
+### Archivos modificados
+
+| Archivo | Cambio |
+|---------|--------|
+| `main.py` | Registro del router `materials_router` |
+| `src/services/__init__.py` | Export de `MaterialAnalyzerService` |
+| `src/services/inventory_schema.py` | Nuevo metodo `get_schema_and_inventory()` que retorna schema + `InventorySearchResult` (antes se descartaba el resultado de Vertex) |
+
+### Como se extraen los attributes (Vertex AI Search)
+
+El endpoint **no usa regex ni string matching** para extraer atributos de la description. En su lugar:
+
+1. `get_schema_and_inventory(description)` hace una unica busqueda en Vertex AI Search
+2. Vertex retorna el `InventorySearchResult` mas cercano con los atributos ya resueltos semanticamente
+   - Ej: "clavos de 2 pulgadas" → Vertex retorna `measure: "2\""` del inventario que mas matchea
+3. Se leen los valores de `required_fields` directamente del resultado de Vertex
+4. Si un campo esta vacio en el resultado → se considera `missing`
+
+Esto funciona porque Vertex AI Search hace **match semantico** entre la description del cliente y los inventarios indexados — incluyendo sinonimos peruanos configurados via keywords.
+
+### Uso desde mcp-hub-equip
+
+El MCP tool `analyze_materials` debe hacer un `POST` al endpoint:
+
+```
+POST {API_OBRALEX_URL}/api/v1/materials/analyze
+Content-Type: application/json
+
+{
+  "materials_structured": [
+    { "description": "fierros corrugados 1/2", "quantity": 10, "unit": "varilla", "brand": null },
+    { "description": "clavos de 2 pulgadas", "quantity": 5, "unit": "kg", "brand": null }
+  ]
+}
+```
+
+Response:
+```json
+{
+  "products": [
+    {
+      "original": "fierros corrugados 1/2",
+      "product": "fierro corrugado",
+      "brand": null,
+      "unit": "varilla",
+      "quantity": 10,
+      "category": "Acero",
+      "subcategory": "Barras de Acero",
+      "schema_source": "subcategory",
+      "required_fields": ["measure"],
+      "attributes": { "measure": "1/2\" x 9 mts" },
+      "missing_attributes": [],
+      "total_required_fields": 1,
+      "completion_percentage": 100.0,
+      "status": "complete",
+      "match_id": "abc123"
+    },
+    {
+      "original": "clavos de 2 pulgadas",
+      "product": "clavo",
+      "brand": null,
+      "unit": "kg",
+      "quantity": 5,
+      "category": "Acero",
+      "subcategory": "Clavos",
+      "schema_source": "subcategory",
+      "required_fields": ["measure"],
+      "attributes": { "measure": "2\"" },
+      "missing_attributes": [],
+      "total_required_fields": 1,
+      "completion_percentage": 100.0,
+      "status": "complete",
+      "match_id": "def456"
+    }
+  ]
+}
+```
+
+---
+
 ## Migracion por fases
 
-### Fase 1 — Crear tool `analyze_materials` en MCP (sin romper nada)
+### Fase 1 — Endpoint `analyze_materials` en api-obralex-py ✅
 
-| Que                                    | Donde            | Esfuerzo |
-| -------------------------------------- | ---------------- | -------- |
-| Endpoint `POST /materials/analyze`     | api-obralex-py   | Medio    |
-| Tool `analyze_materials` en MCP config | mcp-hub-equip    | Bajo     |
-| Tests con materials[] de prueba        | api-obralex-py   | Bajo     |
+| Que                                    | Donde            | Estado      |
+| -------------------------------------- | ---------------- | ----------- |
+| Endpoint `POST /materials/analyze`     | api-obralex-py   | Completado  |
+| `MaterialAnalyzerService`              | api-obralex-py   | Completado  |
+| `get_schema_and_inventory()` method    | api-obralex-py   | Completado  |
+| Tool `analyze_materials` en MCP config | mcp-hub-equip    | Pendiente   |
+| Tests con materials_structured[] de prueba | api-obralex-py   | Pendiente   |
 
-**Entregable:** tool funcional que recibe strings y retorna products enriquecidos.
+**Entregable:** endpoint funcional que recibe materials_structured[] y retorna products enriquecidos.
 
 ### Fase 2 — Simplificar prompt y agent (api-maia)
 
@@ -392,7 +507,7 @@ Cada producto en la respuesta incluye el campo `schema_source` para que el consu
 
 ```json
 {
-  "original": "10 fierros corrugados 1/2",
+  "original": "fierros corrugados 1/2",
   "product": "fierro corrugado",
   "category": "Acero",
   "subcategory": "Barras de Acero",
@@ -407,7 +522,7 @@ Cada producto en la respuesta incluye el campo `schema_source` para que el consu
 
 ```json
 {
-  "original": "cable thw 14 rojo rollo",
+  "original": "cable thw 14 rojo",
   "product": "cable thw",
   "category": "Electricidad",
   "subcategory": "Cables",
@@ -422,7 +537,7 @@ Cada producto en la respuesta incluye el campo `schema_source` para que el consu
 
 ```json
 {
-  "original": "5 galones de pintura latex blanca",
+  "original": "pintura latex blanca",
   "product": "pintura latex",
   "category": "Pinturas",
   "subcategory": null,
@@ -445,7 +560,8 @@ Cada producto en la respuesta incluye el campo `schema_source` para que el consu
 
 - **Fase 1 es independiente**: se puede desarrollar y testear sin tocar api-maia
 - **Rollback facil**: si el MCP tool falla, se puede volver al flujo actual sin cambios
-- **materials[] como contrato**: el formato objeto `{description, quantity, unit, brand}` es simple y estable. Gemini extrae los campos no-producto (quantity, unit, brand) que son triviales para un LLM pero dificiles con regex. El backend solo se enfoca en `description` para schema + atributos
+- **Doble campo materials**: Gemini retorna `materials` (strings raw para persistencia en BD) y `materials_structured` (objetos `{description, quantity, unit, brand}` para enviar al MCP). Ambas listas deben tener el mismo orden y cantidad
+- **materials_structured como contrato del endpoint**: el formato objeto es simple y estable. Gemini extrae los campos no-producto (quantity, unit, brand) que son triviales para un LLM pero dificiles con regex. El backend solo se enfoca en `description` para schema + atributos
 - **suggested_question**: sigue en el agente ya que depende del contexto conversacional
 - **Memoria de materiales**: Gemini sigue acumulando materials[] entre mensajes via historial
 
