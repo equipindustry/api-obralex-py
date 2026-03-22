@@ -34,6 +34,8 @@ La API estara disponible en `http://localhost:8000`
 | `/api/v1/schemas/catalog`    | GET    | Catalogo de categorias y subcategorias con sus campos |
 | `/api/v1/schemas/status`     | GET    | Estado del cache de schemas                           |
 | `/api/v1/schemas/reload`     | POST   | Forzar recarga de schemas desde Cloud Storage         |
+| `/api/v1/materials/attribute-fields` | GET | Lista de campos atributo que el LLM debe extraer de descripciones de productos |
+| `/api/v1/materials/analyze`  | POST   | Analizar materiales: valida atributos del LLM contra required_fields del schema |
 | `/docs`                      | GET    | Documentacion interactiva (Swagger)                   |
 
 ## Arquitectura
@@ -49,23 +51,27 @@ src/
 ├── api/            # Routers FastAPI
 │   ├── health.py
 │   ├── search.py
-│   └── schema.py
+│   ├── schema.py
+│   └── materials.py
 ├── core/           # Configuracion, credenciales, logging
 │   ├── config.py
 │   ├── environment.py
 │   └── logging.py
 ├── models/         # Modelos Pydantic de response
 │   ├── search.py
-│   └── schema.py
+│   ├── schema.py
+│   └── materials.py
 └── services/       # Logica de negocio
     ├── vertex_ai_search.py
-    └── inventory_schema.py
+    ├── inventory_schema.py
+    └── material_analyzer.py
 ```
 
 ### Servicios principales
 
 - **VertexAISearchService** — Busca inventarios en Google Discovery Engine (Vertex AI Search). Usa `MessageToDict` de protobuf para parsear `struct_data`. Los campos mapean 1:1 con la tabla BigQuery `inventories-simplify-prod` (nombres singulares: `category`, `subcategory`).
 - **InventorySchemaService** — Resuelve que campos debe especificar el cliente para un producto. Combina Vertex AI Search (identifica categoria/subcategoria) con un JSON de schemas cacheado desde Cloud Storage (TTL de 1 hora). Jerarquia de resolucion: subcategoria -> categoria -> default. Si el JSON solo contiene `subcategory_schemas`, construye automaticamente `category_schemas` agrupando subcategorias por categoria (union de campos requeridos y merge de opciones). Expone tambien un catalogo completo de categorias/subcategorias con detalle de campos via `get_catalog()`. Schemas actuales: Cables (Electricidad), Barras de Acero y Clavos (Acero).
+- **MaterialAnalyzerService** — Analiza materiales enviados por el LLM. Recibe `materials_structured[]` con atributos detectados por el agente, busca en Vertex AI Search para identificar categoria/subcategoria, y valida los atributos enviados contra los `required_fields` del schema. Calcula `missing_attributes`, `completion_percentage` y `status`. Solo los atributos explicitamente enviados por el LLM cuentan como "filled" (no se usan atributos del inventario matcheado). Expone `ATTRIBUTE_FIELDS` (lista de 15 campos atributo) via endpoint para que el LLM sepa que extraer. Ver `docs/PLAN_AGENT_SIMPLIFICATION_V2.md` para el flujo completo del agente.
 
 ### Terminologia
 

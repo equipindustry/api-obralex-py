@@ -62,6 +62,8 @@ The `keywords` field contains Peruvian construction synonyms (e.g., "fierro" →
 | `GET /api/v1/schemas/catalog` | Full catalog of categories/subcategories with field details |
 | `POST /api/v1/schemas/reload` | Force reload schemas from GCS |
 | `GET /api/v1/schemas/status` | Cache status info |
+| `GET /api/v1/materials/attribute-fields` | List of attribute fields the LLM should extract from product descriptions |
+| `POST /api/v1/materials/analyze` | Analyze materials: validates LLM-provided attributes against schema required_fields, calculates completeness |
 
 ### Cloud Storage schema
 

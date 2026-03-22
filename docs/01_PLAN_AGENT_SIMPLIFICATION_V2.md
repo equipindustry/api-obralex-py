@@ -61,22 +61,178 @@ El agente mezcla deteccion con analisis de schema, lo cual genera:
 └─────────────────────────────────┘     └──────────────────────────────────────┘
 ```
 
+## Flujo del agente (orden de llamado de tools)
+
+El agente debe seguir este orden para analizar materiales correctamente:
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│  PASO 1: get_attribute_fields                                       │
+│  GET /api/v1/materials/attribute-fields                             │
+│                                                                     │
+│  Retorna la lista de campos atributo posibles:                      │
+│  ["color","presentation","type","model","size","measure",           │
+│   "thickness","weight","volume","angle","fabrication",              │
+│   "material","reference","cluster","compilation"]                   │
+│                                                                     │
+│  → El LLM sabe QUE campos buscar en el texto del usuario           │
+│  → Se puede cachear (no cambia frecuentemente)                      │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────────────┐
+│  PASO 2: get_schemas_catalog                                        │
+│  GET /api/v1/schemas/catalog                                        │
+│                                                                     │
+│  Retorna categorias/subcategorias con required_fields y             │
+│  field_options (incluyendo opciones validas para campos como        │
+│  cluster, compilation, presentation, etc.)                          │
+│                                                                     │
+│  → El LLM sabe QUE VALORES son validos para cada campo             │
+│  → Clave para campos como cluster/compilation donde el LLM         │
+│    no puede inferir el valor sin conocer las opciones               │
+│  → Se puede cachear (cambia solo cuando se hace POST /reload)       │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────────────┐
+│  PASO 3: El LLM extrae atributos del texto del usuario              │
+│                                                                     │
+│  Con la lista de campos (paso 1) y las opciones validas (paso 2),   │
+│  el LLM analiza el mensaje del usuario y extrae:                    │
+│  - description, quantity, unit, brand (campos basicos)              │
+│  - attributes: dict con los campos que pudo identificar             │
+│                                                                     │
+│  Ejemplo: "100 clavos de acero de 2 pulgadas negros"               │
+│  → description: "clavos de acero de 2 pulgadas negros"             │
+│  → quantity: 100                                                    │
+│  → attributes: {measure: "2 pulgadas", color: "negro",             │
+│                  material: "acero"}                                  │
+│                                                                     │
+│  Ejemplo: "cable thw 14 rojo rollo 100m"                            │
+│  → description: "cable thw 14 rojo"                                 │
+│  → attributes: {cluster: "THW-90 BH", color: "Rojo",               │
+│                  presentation: "Rollo x 100mts"}                    │
+│    (cluster y presentation mapeados usando field_options del paso 2) │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────────────┐
+│  PASO 4: analyze_materials                                          │
+│  POST /api/v1/materials/analyze                                     │
+│                                                                     │
+│  Envia materials_structured[] con los atributos detectados:         │
+│  {                                                                  │
+│    "materials_structured": [                                        │
+│      {                                                              │
+│        "description": "clavos de acero de 2 pulgadas negros",      │
+│        "quantity": 100,                                             │
+│        "unit": "unidad",                                            │
+│        "brand": null,                                               │
+│        "attributes": {                                              │
+│          "measure": "2 pulgadas",                                   │
+│          "color": "negro",                                          │
+│          "material": "acero"                                        │
+│        }                                                            │
+│      }                                                              │
+│    ]                                                                │
+│  }                                                                  │
+│                                                                     │
+│  api-obralex:                                                       │
+│  1. Busca en Vertex AI Search → category, subcategory, product      │
+│  2. Obtiene required_fields del schema                              │
+│  3. Compara attributes del LLM vs required_fields                   │
+│  4. Calcula missing_attributes, completion_%, status                │
+│  5. Si complete → asigna match_id                                   │
+│                                                                     │
+│  Retorna: products[] con status complete/incomplete/detected        │
+└──────────────────────────┬──────────────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────────────┐
+│  PASO 5: Si hay productos con status "incomplete"                   │
+│                                                                     │
+│  El LLM le pregunta al usuario los missing_attributes               │
+│  usando las questions del schema (paso 2)                           │
+│                                                                     │
+│  Cuando el usuario responde, el LLM re-envia a analyze_materials    │
+│  con los atributos actualizados → repite desde PASO 3               │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Resumen de tools MCP necesarios
+
+| #   | Tool                   | Endpoint                                 | Cuando          | Cacheable |
+| --- | ---------------------- | ---------------------------------------- | --------------- | --------- |
+| 1   | `get_attribute_fields` | `GET /api/v1/materials/attribute-fields` | Al inicio       | Si        |
+| 2   | `get_schemas_catalog`  | `GET /api/v1/schemas/catalog`            | Al inicio       | Si        |
+| 3   | `analyze_materials`    | `POST /api/v1/materials/analyze`         | Por cada pedido | No        |
+
+Los pasos 1 y 2 se pueden ejecutar una sola vez al inicio de la conversacion y cachearse. El paso 3 se ejecuta cada vez que el usuario menciona materiales.
+
 ## Cambios por capa
 
-### Capa 1 — Nuevo MCP tool: `analyze_materials`
+### Capa 1 — MCP tools en api-obralex-py
 
 **Servidor:** mcp-hub-equip
 **Endpoint destino:** api-obralex-py
 
+#### Tool 1: `get_attribute_fields` (NUEVO)
+
 ```
-Tool: analyze_materials
-Input:
-  materials_structured: [        # array de objetos (Gemini extrae los campos basicos)
+GET /api/v1/materials/attribute-fields
+
+Response:
+{
+  "attribute_fields": [
+    "color", "presentation", "type", "model", "size",
+    "measure", "thickness", "weight", "volume", "angle",
+    "fabrication", "material", "reference", "cluster", "compilation"
+  ]
+}
+```
+
+#### Tool 2: `get_schemas_catalog` (existente)
+
+```
+GET /api/v1/schemas/catalog
+
+Response:
+{
+  "total_categories": 2,
+  "total_subcategories": 3,
+  "categories": [
     {
-      "description": "fierros corrugados 1/2",   # descripcion del producto (sin cantidad/unidad/marca)
-      "quantity": 10,                              # extraido por Gemini
-      "unit": "varilla",                           # extraido por Gemini (null si no se menciono)
-      "brand": null                                # extraido por Gemini (null si no se menciono)
+      "category": "Acero",
+      "subcategories": [
+        {
+          "subcategory": "Barras de Acero",
+          "required_fields": ["measure"],
+          "field_options": {
+            "measure": {
+              "type": "choice",
+              "options": ["6 mm x 9 mts", "8 mm x 9 mts", ...],
+              "question": "¿Qué medida necesitas?"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
+```
+
+#### Tool 3: `analyze_materials` (actualizado)
+
+```
+POST /api/v1/materials/analyze
+
+Input:
+  materials_structured: [
+    {
+      "description": "fierros corrugados 1/2",
+      "quantity": 10,
+      "unit": "varilla",
+      "brand": null,
+      "attributes": {            ← NUEVO: atributos detectados por el LLM
+        "measure": "1/2"
+      }
     }
   ]
 
@@ -106,27 +262,27 @@ Output:
 
 **Separacion de responsabilidades en el input:**
 
-| Campo                  | Quien lo extrae          | Por que                                                                                                                                       |
-| ---------------------- | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `description`          | Gemini                   | Es la descripcion del producto tal como lo menciona el cliente, sin cantidad/unidad/marca. El backend usa esto para buscar en schema + Vertex |
-| `quantity`             | Gemini                   | Es dato conversacional ("necesito 10...", "dame 50..."), trivial para un LLM                                                                  |
-| `unit`                 | Gemini                   | Es dato conversacional ("bolsas", "rollos", "varillas"), trivial para un LLM                                                                  |
-| `brand`                | Gemini                   | Solo si el cliente la menciona explicitamente. Trivial para un LLM, dificil con regex                                                         |
-| `attributes`           | api-obralex (via Vertex) | Vertex AI Search resuelve semanticamente los atributos del inventario mas cercano (ej. "2 pulgadas" → `measure: "2\""`)                       |
-| `category/subcategory` | api-obralex (via Vertex) | Vertex AI Search identifica categoria/subcategoria del inventario mas cercano                                                                 |
-| `completion_%/status`  | api-obralex              | Calcula deterministicamente contra required_fields del schema                                                                                 |
+| Campo                  | Quien lo extrae          | Por que                                                                                                                                                                                         |
+| ---------------------- | ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `description`          | LLM (Gemini)             | Es la descripcion del producto tal como lo menciona el cliente, sin cantidad/unidad/marca. El backend usa esto para buscar en schema + Vertex                                                   |
+| `quantity`             | LLM (Gemini)             | Es dato conversacional ("necesito 10...", "dame 50..."), trivial para un LLM                                                                                                                    |
+| `unit`                 | LLM (Gemini)             | Es dato conversacional ("bolsas", "rollos", "varillas"), trivial para un LLM                                                                                                                    |
+| `brand`                | LLM (Gemini)             | Solo si el cliente la menciona explicitamente. Trivial para un LLM, dificil con regex                                                                                                           |
+| `attributes`           | LLM (Gemini)             | El LLM extrae atributos usando la lista de campos (paso 1) y las opciones validas del schema (paso 2). Campos como cluster/compilation requieren conocer las opciones para mapear correctamente |
+| `category/subcategory` | api-obralex (via Vertex) | Vertex AI Search identifica categoria/subcategoria del inventario mas cercano                                                                                                                   |
+| `completion_%/status`  | api-obralex              | Compara attributes del LLM vs required_fields del schema. Solo los atributos explicitamente enviados cuentan como "filled"                                                                      |
 
 El endpoint `POST /api/v1/materials/analyze` (api-obralex-py) internamente:
 
 1. Por cada material en `materials_structured[]`, usa `description` para una **unica busqueda en Vertex AI Search** que retorna:
-   - El `InventorySearchResult` con los atributos ya resueltos semanticamente (ej. "2 pulgadas" → `measure: "2\""`)
    - La `category` y `subcategory` del inventario mas cercano
-2. Con la subcategoria/categoria, obtiene el schema (`required_fields`, `field_options`) via `InventorySchemaService`
-3. Lee los `attributes` directamente del resultado de Vertex (no parsea la description con regex)
-4. Pasa `quantity`, `unit`, `brand` directamente al producto (vienen de Gemini)
-5. Calcula `missing_attributes` = required_fields cuyos valores estan vacios en el inventario
+   - El `product` (nombre normalizado del inventario)
+2. Con la subcategoria/categoria, obtiene el schema (`required_fields`) via `InventorySchemaService`
+3. Compara los `attributes` enviados por el LLM contra los `required_fields` del schema
+4. Solo los atributos explicitamente enviados por el LLM cuentan como "filled" — **NO se usan atributos del resultado de Vertex AI Search** (esos pertenecen al inventario, no a lo que el usuario pidio)
+5. Calcula `missing_attributes` = required_fields sin valor en los attributes del LLM
 6. Calcula `completion_percentage` y `status`
-7. Si completo → el `match_id` ya lo tiene del resultado de Vertex (sin busqueda adicional)
+7. Si completo → el `match_id` viene del resultado de Vertex (sin busqueda adicional)
 8. Retorna array de products enriquecidos
 
 ### Capa 2 — Prompt simplificado (api-maia)
@@ -143,10 +299,13 @@ FORMATO DE RESPUESTA:
   "materials": ["10 varillas de fierro corrugado de 1/2", "cable thw 14 rojo"],
   "materials_structured": [
     {
-      "description": "descripcion del producto (sin cantidad, unidad ni marca)",
+      "description": "descripcion del producto y sus atributos tecnicos",
       "quantity": number o null,
       "unit": "string o null",
-      "brand": "string o null"
+      "brand": "string o null",
+      "attributes": {
+        "campo": "valor detectado"
+      }
     }
   ],
   "suggested_question": "string o null"
@@ -159,6 +318,9 @@ REGLAS:
   - quantity = cantidad numerica (ej. 10, 50). null si no se menciono
   - unit = unidad de medida (ej. "bolsa", "rollo", "varilla", "metro"). null si no se menciono
   - brand = marca SOLO si el cliente la menciono explicitamente. null si no la menciono
+  - attributes = dict con los atributos detectados del producto. Usar la lista de campos de
+    get_attribute_fields y las opciones validas de get_schemas_catalog para mapear correctamente.
+    Solo incluir atributos que se puedan inferir del texto del usuario.
 - NO incluir cantidad, unidad ni marca dentro de description
 - materials y materials_structured deben tener el mismo orden y cantidad de elementos
 - SIEMPRE acumular materiales de mensajes anteriores
@@ -263,60 +425,62 @@ Response: {
 ```
 Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de pintura"
                 │
-        ┌───────┴────────┐
-        │   Gemini        │
-        │   (deteccion)   │
-        └───────┬────────┘
+        ┌───────┴─────────────────────────────────────────┐
+        │   PASO 1-2: LLM obtiene metadata (cacheable)    │
+        │                                                  │
+        │   GET /materials/attribute-fields                │
+        │   → ["color","measure","cluster",...]            │
+        │                                                  │
+        │   GET /schemas/catalog                           │
+        │   → {Cables: {cluster: {options: [...]}}, ...}   │
+        └───────┬─────────────────────────────────────────┘
                 │
-        materials: [                          # strings para BD
-          "10 varillas de fierro corrugado de 1/2",
-          "1 rollo de cable thw 14 rojo",
-          "5 galones de pintura latex blanca"
-        ]
-        materials_structured: [              # objetos para MCP
-          {desc: "fierros corrugados 1/2", qty: 10, unit: "varilla", brand: null},
-          {desc: "cable thw 14 rojo",      qty: 1,  unit: "rollo",   brand: null},
-          {desc: "pintura latex blanca",   qty: 5,  unit: "galon",   brand: null}
-        ]
+        ┌───────┴─────────────────────────────────────────┐
+        │   PASO 3: LLM extrae atributos del texto         │
+        │                                                  │
+        │   "fierros corrugados 1/2"                       │
+        │   → attrs: {measure: "1/2"}                      │
+        │                                                  │
+        │   "cable thw 14 rojo"                            │
+        │   → attrs: {cluster:"THW-90 BH", color:"Rojo"}  │
+        │     (cluster mapeado usando options del catalogo) │
+        │                                                  │
+        │   "pintura latex blanca"                         │
+        │   → attrs: {color: "blanco"}                     │
+        └───────┬─────────────────────────────────────────┘
                 │
-        ┌───────┴────────┐
-        │   MCP Server    │
-        │   (calculo)     │
-        └───────┬────────┘
-                │
-        ┌───────┴──────────────────────────────────────────┐
+        ┌───────┴─────────────────────────────────────────┐
+        │   PASO 4: POST /materials/analyze                │
+        │   MCP Server valida atributos del LLM            │
+        │                                                  │
+        │   Por cada material:                             │
+        │   1. Vertex search → category, subcategory       │
+        │   2. Schema lookup → required_fields             │
+        │   3. Compara attrs del LLM vs required_fields    │
+        ├─────────────────────────────────────────────────┤
         │ "fierros corrugados 1/2"                         │
-        │  → Vertex search → InventorySearchResult {       │
-        │      product:"fierro corrugado",                 │
-        │      category:"Acero", subcat:"Barras de Acero", │
-        │      measure:"1/2\" x 9 mts" }                  │
-        │  → schema: required=[measure]                    │
-        │  → attributes leidos de Vertex: {measure:✓}      │
+        │  → required: [measure]                           │
+        │  → LLM envio: {measure: "1/2"} ✓                │
         │  → missing: [] → completion: 100%                │
-        │  → match_id: del mismo resultado Vertex          │
-        │  → status: "complete"                            │
-        ├──────────────────────────────────────────────────┤
+        │  → status: "complete", match_id: "<id>"          │
+        ├─────────────────────────────────────────────────┤
         │ "cable thw 14 rojo"                              │
-        │  → Vertex search → InventorySearchResult {       │
-        │      product:"cable", subcat:"Cables",           │
-        │      cluster:"THW-90 BH", color:"Rojo",         │
-        │      presentation:"", weight:"" }                │
-        │  → schema: required=[cluster,compilation,        │
-        │     color,presentation,weight]                   │
-        │  → attributes de Vertex: {cluster:✓, color:✓,    │
-        │     presentation:✗, weight:✗}                    │
-        │  → missing: [presentation, weight]               │
-        │  → completion: 60% → status: "incomplete"        │
-        ├──────────────────────────────────────────────────┤
+        │  → required: [cluster,compilation,color,         │
+        │     presentation,weight]                         │
+        │  → LLM envio: {cluster:✓, color:✓}              │
+        │  → missing: [compilation, presentation, weight]  │
+        │  → completion: 40% → status: "incomplete"        │
+        ├─────────────────────────────────────────────────┤
         │ "pintura latex blanca"                           │
-        │  → Vertex search → sin schema para categoria     │
-        │  → schema_source: "default"                      │
-        │  → category: "Pinturas" (de Vertex)              │
-        │  → deteccion basica: product, quantity, unit,    │
-        │     brand (de Gemini)                            │
+        │  → schema_source: "default" (sin schema)         │
         │  → status: "detected"                            │
-        │  → completion: null (sin schema)                 │
-        └──────────────────────────────────────────────────┘
+        └───────┬─────────────────────────────────────────┘
+                │
+        ┌───────┴─────────────────────────────────────────┐
+        │   PASO 5: Si hay "incomplete"                    │
+        │   LLM pregunta al usuario los missing_attributes │
+        │   → Usuario responde → re-enviar PASO 3-4       │
+        └───────┬─────────────────────────────────────────┘
                 │
         ┌───────┴────────┐
         │   api-maia      │
@@ -325,15 +489,15 @@ Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de p
         └────────────────┘
 ```
 
-## Implementacion Fase 1 (api-obralex-py) — COMPLETADA
+## Implementacion Fase 1 (api-obralex-py) — COMPLETADA (v2: atributos del LLM)
 
 ### Archivos creados
 
-| Archivo                             | Proposito                                                                                     |
-| ----------------------------------- | --------------------------------------------------------------------------------------------- |
-| `src/models/materials.py`           | `DetectedMaterial` (input), `EnrichedProduct` (output), request/response models               |
-| `src/services/material_analyzer.py` | `MaterialAnalyzerService` — orquesta: Vertex search → schema lookup → atributos → completitud |
-| `src/api/materials.py`              | Router con `POST /api/v1/materials/analyze`                                                   |
+| Archivo                             | Proposito                                                                                                                                      |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/models/materials.py`           | `DetectedMaterial` (input con `attributes`), `EnrichedProduct` (output), request/response models                                               |
+| `src/services/material_analyzer.py` | `MaterialAnalyzerService` — orquesta: Vertex search → schema lookup → validacion de atributos del LLM → completitud. Expone `ATTRIBUTE_FIELDS` |
+| `src/api/materials.py`              | Router con `POST /api/v1/materials/analyze` y `GET /api/v1/materials/attribute-fields`                                                         |
 
 ### Archivos modificados
 
@@ -343,30 +507,58 @@ Cliente: "necesito 10 fierros corrugados 1/2, cable thw 14 rojo y 5 galones de p
 | `src/services/__init__.py`         | Export de `MaterialAnalyzerService`                                                                                                 |
 | `src/services/inventory_schema.py` | Nuevo metodo `get_schema_and_inventory()` que retorna schema + `InventorySearchResult` (antes se descartaba el resultado de Vertex) |
 
-### Como se extraen los attributes (Vertex AI Search)
+### Cambios v2 (atributos del LLM en vez de Vertex)
 
-El endpoint **no usa regex ni string matching** para extraer atributos de la description. En su lugar:
+| Cambio                              | Archivo                             | Detalle                                                                                                                                       |
+| ----------------------------------- | ----------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| Nuevo campo `attributes` en input   | `src/models/materials.py`           | `DetectedMaterial.attributes: dict[str, str] \| None` — atributos detectados por el LLM                                                       |
+| Nuevo endpoint `attribute-fields`   | `src/api/materials.py`              | `GET /materials/attribute-fields` — lista de campos atributo para que el LLM sepa que extraer                                                 |
+| Validacion contra atributos del LLM | `src/services/material_analyzer.py` | `_analyze_one()` ahora usa `material["attributes"]` en vez de extraer de Vertex. Solo atributos explicitamente enviados cuentan como "filled" |
 
-1. `get_schema_and_inventory(description)` hace una unica busqueda en Vertex AI Search
-2. Vertex retorna el `InventorySearchResult` mas cercano con los atributos ya resueltos semanticamente
-   - Ej: "clavos de 2 pulgadas" → Vertex retorna `measure: "2\""` del inventario que mas matchea
-3. Se leen los valores de `required_fields` directamente del resultado de Vertex
-4. Si un campo esta vacio en el resultado → se considera `missing`
+### Como funciona la validacion de attributes
 
-Esto funciona porque Vertex AI Search hace **match semantico** entre la description del cliente y los inventarios indexados — incluyendo sinonimos peruanos configurados via keywords.
+El endpoint **no extrae atributos de Vertex AI Search**. Los atributos vienen del LLM:
+
+1. El LLM consulta `get_attribute_fields` y `get_schemas_catalog` para saber que campos y opciones existen
+2. El LLM extrae atributos del texto del usuario y los envia en `attributes`
+3. `get_schema_and_inventory(description)` busca en Vertex AI Search para obtener `category`, `subcategory` y `product`
+4. Con la subcategoria, obtiene `required_fields` del schema
+5. Compara los `attributes` del LLM contra `required_fields` — solo los enviados explicitamente cuentan como "filled"
+6. Si un required_field no esta en `attributes` → se considera `missing`
+
+**Importante:** Los atributos del resultado de Vertex AI Search pertenecen al inventario matcheado, NO a lo que el usuario pidio. Por eso no se usan para calcular completitud.
 
 ### Uso desde mcp-hub-equip
 
-El MCP tool `analyze_materials` debe hacer un `POST` al endpoint:
+El flujo completo desde el MCP server requiere 3 tools en orden:
 
-```
+```bash
+# PASO 1 — Obtener lista de campos atributo (cacheable)
+GET {API_OBRALEX_URL}/api/v1/materials/attribute-fields
+
+# PASO 2 — Obtener catalogo de schemas con opciones validas (cacheable)
+GET {API_OBRALEX_URL}/api/v1/schemas/catalog
+
+# PASO 3 — Analizar materiales (con atributos detectados por el LLM)
 POST {API_OBRALEX_URL}/api/v1/materials/analyze
 Content-Type: application/json
 
 {
   "materials_structured": [
-    { "description": "fierros corrugados 1/2", "quantity": 10, "unit": "varilla", "brand": null },
-    { "description": "clavos de 2 pulgadas", "quantity": 5, "unit": "kg", "brand": null }
+    {
+      "description": "fierros corrugados 1/2",
+      "quantity": 10,
+      "unit": "varilla",
+      "brand": null,
+      "attributes": { "measure": "1/2" }
+    },
+    {
+      "description": "clavos de 2 pulgadas",
+      "quantity": 5,
+      "unit": "kg",
+      "brand": null,
+      "attributes": { "measure": "2 pulgadas" }
+    }
   ]
 }
 ```
@@ -386,7 +578,7 @@ Response:
       "subcategory": "Barras de Acero",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "1/2\" x 9 mts" },
+      "attributes": { "measure": "1/2" },
       "missing_attributes": [],
       "total_required_fields": 1,
       "completion_percentage": 100.0,
@@ -403,7 +595,7 @@ Response:
       "subcategory": "Clavos",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "2\"" },
+      "attributes": { "measure": "2 pulgadas" },
       "missing_attributes": [],
       "total_required_fields": 1,
       "completion_percentage": 100.0,
@@ -416,14 +608,20 @@ Response:
 
 ### Casos de prueba
 
-#### Test 1 — Barras de Acero (complete: measure presente en inventario)
+#### Test 1 — Barras de Acero (complete: LLM detecto measure)
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/materials/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "materials_structured": [
-      { "description": "fierro corrugado de 1/2", "quantity": 10, "unit": "varilla", "brand": null }
+      {
+        "description": "fierro corrugado de 1/2",
+        "quantity": 10,
+        "unit": "varilla",
+        "brand": null,
+        "attributes": { "measure": "1/2" }
+      }
     ]
   }'
 ```
@@ -443,7 +641,7 @@ Resultado esperado:
       "subcategory": "Barras de Acero",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "1/2\" x 9 mts" },
+      "attributes": { "measure": "1/2" },
       "missing_attributes": [],
       "total_required_fields": 1,
       "completion_percentage": 100.0,
@@ -454,14 +652,20 @@ Resultado esperado:
 }
 ```
 
-#### Test 2 — Clavos (complete: measure presente en inventario)
+#### Test 2 — Barras de Acero (incomplete: LLM no detecto measure)
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/materials/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "materials_structured": [
-      { "description": "clavos de 2 pulgadas", "quantity": 5, "unit": "kg", "brand": null }
+      {
+        "description": "fierros corrugados",
+        "quantity": 0,
+        "unit": null,
+        "brand": null,
+        "attributes": {}
+      }
     ]
   }'
 ```
@@ -472,34 +676,43 @@ Resultado esperado:
 {
   "products": [
     {
-      "original": "clavos de 2 pulgadas",
-      "product": "clavo",
+      "original": "fierros corrugados",
+      "product": "Barra Corrugada 6mm x 9m",
       "brand": null,
-      "unit": "kg",
-      "quantity": 5,
+      "unit": null,
+      "quantity": 0,
       "category": "Acero",
-      "subcategory": "Clavos",
+      "subcategory": "Barras de Acero",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "2\"" },
-      "missing_attributes": [],
+      "attributes": { "measure": null },
+      "missing_attributes": ["measure"],
       "total_required_fields": 1,
-      "completion_percentage": 100.0,
-      "status": "complete",
-      "match_id": "<id del inventario>"
+      "completion_percentage": 0.0,
+      "status": "incomplete",
+      "match_id": null
     }
   ]
 }
 ```
 
-#### Test 3 — Cables (incomplete: faltan presentation y weight)
+#### Test 3 — Cables (incomplete: LLM detecto algunos atributos)
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/materials/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "materials_structured": [
-      { "description": "cable thw 14 rojo", "quantity": 1, "unit": "rollo", "brand": null }
+      {
+        "description": "cable thw 14 rojo",
+        "quantity": 1,
+        "unit": "rollo",
+        "brand": null,
+        "attributes": {
+          "cluster": "THW-90 BH",
+          "color": "Rojo"
+        }
+      }
     ]
   }'
 ```
@@ -527,14 +740,14 @@ Resultado esperado:
       ],
       "attributes": {
         "cluster": "THW-90 BH",
-        "compilation": "THW-90 BH",
+        "compilation": null,
         "color": "Rojo",
         "presentation": null,
         "weight": null
       },
-      "missing_attributes": ["presentation", "weight"],
+      "missing_attributes": ["compilation", "presentation", "weight"],
       "total_required_fields": 5,
-      "completion_percentage": 60.0,
+      "completion_percentage": 40.0,
       "status": "incomplete",
       "match_id": null
     }
@@ -549,7 +762,13 @@ curl -X POST http://localhost:8000/api/v1/materials/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "materials_structured": [
-      { "description": "pintura latex blanca", "quantity": 5, "unit": "galon", "brand": null }
+      {
+        "description": "pintura latex blanca",
+        "quantity": 5,
+        "unit": "galon",
+        "brand": null,
+        "attributes": { "color": "blanco" }
+      }
     ]
   }'
 ```
@@ -580,17 +799,45 @@ Resultado esperado:
 }
 ```
 
-#### Test 5 — Batch mixto (los 3 escenarios juntos)
+#### Test 5 — Batch mixto con atributos del LLM
 
 ```bash
 curl -X POST http://localhost:8000/api/v1/materials/analyze \
   -H "Content-Type: application/json" \
   -d '{
     "materials_structured": [
-      { "description": "fierro corrugado de 3/8", "quantity": 20, "unit": "varilla", "brand": null },
-      { "description": "cable thw rojo rollo", "quantity": 2, "unit": "rollo", "brand": "Indeco" },
-      { "description": "clavos de 3 pulgadas", "quantity": 10, "unit": "kg", "brand": null },
-      { "description": "cemento portland", "quantity": 50, "unit": "bolsa", "brand": "Sol" }
+      {
+        "description": "fierro corrugado de 3/8",
+        "quantity": 20,
+        "unit": "varilla",
+        "brand": null,
+        "attributes": { "measure": "3/8" }
+      },
+      {
+        "description": "cable thw rojo rollo 100m",
+        "quantity": 2,
+        "unit": "rollo",
+        "brand": "Indeco",
+        "attributes": {
+          "cluster": "THW-90 BH",
+          "color": "Rojo",
+          "presentation": "Rollo x 100mts"
+        }
+      },
+      {
+        "description": "clavos de 3 pulgadas",
+        "quantity": 10,
+        "unit": "kg",
+        "brand": null,
+        "attributes": { "measure": "3 pulgadas" }
+      },
+      {
+        "description": "cemento portland",
+        "quantity": 50,
+        "unit": "bolsa",
+        "brand": "Sol",
+        "attributes": {}
+      }
     ]
   }'
 ```
@@ -610,7 +857,7 @@ Resultado esperado:
       "subcategory": "Barras de Acero",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "3/8\" x 9 mts" },
+      "attributes": { "measure": "3/8" },
       "missing_attributes": [],
       "total_required_fields": 1,
       "completion_percentage": 100.0,
@@ -618,7 +865,7 @@ Resultado esperado:
       "match_id": "<id>"
     },
     {
-      "original": "cable thw rojo rollo",
+      "original": "cable thw rojo rollo 100m",
       "product": "cable",
       "brand": "Indeco",
       "unit": "rollo",
@@ -635,14 +882,14 @@ Resultado esperado:
       ],
       "attributes": {
         "cluster": "THW-90 BH",
-        "compilation": "THW-90 BH",
+        "compilation": null,
         "color": "Rojo",
         "presentation": "Rollo x 100mts",
         "weight": null
       },
-      "missing_attributes": ["weight"],
+      "missing_attributes": ["compilation", "weight"],
       "total_required_fields": 5,
-      "completion_percentage": 80.0,
+      "completion_percentage": 60.0,
       "status": "incomplete",
       "match_id": null
     },
@@ -656,7 +903,7 @@ Resultado esperado:
       "subcategory": "Clavos",
       "schema_source": "subcategory",
       "required_fields": ["measure"],
-      "attributes": { "measure": "3\"" },
+      "attributes": { "measure": "3 pulgadas" },
       "missing_attributes": [],
       "total_required_fields": 1,
       "completion_percentage": 100.0,
@@ -684,7 +931,7 @@ Resultado esperado:
 }
 ```
 
-> **Nota:** Los valores de `product`, `attributes` y `match_id` dependen de lo que Vertex AI Search retorne para cada description. Los ejemplos asumen que el inventario contiene los productos indexados con los atributos esperados. Los campos `quantity`, `unit` y `brand` siempre son pass-through de lo que envio Gemini.
+> **Nota:** Los valores de `product` y `match_id` dependen de lo que Vertex AI Search retorne. Los `attributes` ahora reflejan exactamente lo que el LLM envio, no lo que tiene el inventario. Los campos `quantity`, `unit` y `brand` siempre son pass-through de lo que envio el LLM.
 
 ---
 
